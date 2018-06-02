@@ -1,18 +1,5 @@
-/*
-  In App.xaml:
-  <Application.Resources>
-      <vm:ViewModelLocator xmlns:vm="clr-namespace:DisertatieApp"
-                           x:Key="Locator" />
-  </Application.Resources>
-  
-  In the View:
-  DataContext="{Binding Source={StaticResource Locator}, Path=ViewModelName}"
-
-  You can also use Blend to do all this with the tool's support.
-  See http://www.galasoft.ch/mvvm
-*/
-
 using CommonServiceLocator;
+using DisertatieApp.Views;
 using GalaSoft.MvvmLight.Ioc;
 
 namespace DisertatieApp.ViewModels
@@ -30,23 +17,17 @@ namespace DisertatieApp.ViewModels
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
 
-            ////if (ViewModelBase.IsInDesignModeStatic)
-            ////{
-            ////    // Create design time view services and models
-            ////    SimpleIoc.Default.Register<IDataService, DesignDataService>();
-            ////}
-            ////else
-            ////{
-            ////    // Create run time view services and models
-            ////    SimpleIoc.Default.Register<IDataService, DataService>();
-            ////}
-
             SimpleIoc.Default.Register<MainViewModel>();
+            SimpleIoc.Default.Register<MainView>();
+
             SimpleIoc.Default.Register<ThumbnailContainerViewModel>();
+            SimpleIoc.Default.Register<ThumbnailContainerView>();
+
             SimpleIoc.Default.Register<ImagesViewerViewModel>();
+            SimpleIoc.Default.Register<ImagesViewerView>();
         }
 
-        public MainViewModel Main
+        public MainViewModel MainVM
         {
             get
             {
@@ -54,7 +35,15 @@ namespace DisertatieApp.ViewModels
             }
         }
 
-        public ThumbnailContainerViewModel Container
+        public MainView Main
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<MainView>();
+            }
+        }
+
+        public ThumbnailContainerViewModel ContainerVM
         {
             get
             {
@@ -62,11 +51,27 @@ namespace DisertatieApp.ViewModels
             }
         }
 
-        public ImagesViewerViewModel Viewer
+        public ThumbnailContainerView Container
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<ThumbnailContainerView>();
+            }
+        }
+
+        public ImagesViewerViewModel ViewerVM
         {
             get
             {
                 return ServiceLocator.Current.GetInstance<ImagesViewerViewModel>();
+            }
+        }
+
+        public ImagesViewerView Viewer
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<ImagesViewerView>();
             }
         }
 

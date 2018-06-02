@@ -106,7 +106,7 @@
       <DependentUpon>MainView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Views\ThumbnailCointainerView.xaml">
+    <Page Include="Views\ThumbnailContainerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -114,8 +114,8 @@
   <ItemGroup>
     <Compile Include="Models\ThumbnailFile.cs" />
     <Compile Include="ViewModels\ThumbnailContainerViewModel.cs" />
-    <Compile Include="Views\ThumbnailCointainerView.xaml.cs">
-      <DependentUpon>ThumbnailCointainerView.xaml</DependentUpon>
+    <Compile Include="Views\ThumbnailContainerView.xaml.cs">
+      <DependentUpon>ThumbnailContainerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>

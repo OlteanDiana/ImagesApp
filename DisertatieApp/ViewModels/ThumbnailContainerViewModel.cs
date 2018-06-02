@@ -48,7 +48,7 @@ namespace DisertatieApp.ViewModels
                      .Send(
                             new OpenWindowMessage()
                             {
-                                FilePath = obj.ToString()
+                                FilePath = obj?.ToString()
                             });
         }
 

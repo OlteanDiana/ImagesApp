@@ -1,34 +1,37 @@
+using DisertatieApp.Messages;
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Messaging;
+using System.Windows;
 
 namespace DisertatieApp.ViewModels
 {
-    /// <summary>
-    /// This class contains properties that the main View can data bind to.
-    /// <para>
-    /// Use the <strong>mvvminpc</strong> snippet to add bindable properties to this ViewModel.
-    /// </para>
-    /// <para>
-    /// You can also use Blend to data bind with the tool's support.
-    /// </para>
-    /// <para>
-    /// See http://www.galasoft.ch/mvvm
-    /// </para>
-    /// </summary>
     public class MainViewModel : ViewModelBase
     {
+        private ViewModelLocator _locator;
+
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
         public MainViewModel()
         {
-            ////if (IsInDesignMode)
-            ////{
-            ////    // Code runs in Blend --> create design time data.
-            ////}
-            ////else
-            ////{
-            ////    // Code runs "for real"
-            ////}
+            _locator = Application.Current.TryFindResource("Locator") as ViewModelLocator;
+            Messenger.Default.Register<OpenWindowMessage>(this, ProcessOpenWindowMessage);
+        }
+
+        private void ProcessOpenWindowMessage(OpenWindowMessage message)
+        {
+            if (_locator == null)
+            {
+                return;
+            }
+
+            var windowVM = _locator.ViewerVM;
+            windowVM.FilePath = message.FilePath;
+
+            var modalWindow = _locator.Viewer;
+            modalWindow.DataContext = windowVM;
+
+            modalWindow.Show();
         }
     }
 }

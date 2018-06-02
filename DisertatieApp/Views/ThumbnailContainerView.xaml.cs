@@ -5,9 +5,9 @@ namespace DisertatieApp.Views
     /// <summary>
     /// Interaction logic for ThumbnailCointainerView.xaml
     /// </summary>
-    public partial class ThumbnailCointainerView : UserControl
+    public partial class ThumbnailContainerView : UserControl
     {
-        public ThumbnailCointainerView()
+        public ThumbnailContainerView()
         {
             InitializeComponent();
         }
