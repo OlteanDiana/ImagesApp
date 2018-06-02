@@ -43,6 +43,7 @@ namespace DisertatieApp.ViewModels
 
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<ThumbnailContainerViewModel>();
+            SimpleIoc.Default.Register<ImagesViewerViewModel>();
         }
 
         public MainViewModel Main
@@ -58,6 +59,14 @@ namespace DisertatieApp.ViewModels
             get
             {
                 return ServiceLocator.Current.GetInstance<ThumbnailContainerViewModel>();
+            }
+        }
+
+        public ImagesViewerViewModel Viewer
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<ImagesViewerViewModel>();
             }
         }
 

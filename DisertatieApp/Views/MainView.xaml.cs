@@ -1,4 +1,8 @@
-﻿using System.Windows;
+﻿using DisertatieApp.Messages;
+using GalaSoft.MvvmLight.Messaging;
+using System.Windows;
+using CommonServiceLocator;
+using DisertatieApp.ViewModels;
 
 namespace DisertatieApp.Views
 {
@@ -10,6 +14,20 @@ namespace DisertatieApp.Views
         public MainView()
         {
             InitializeComponent();
+            Messenger.Default.Register<OpenWindowMessage>(this, ProcessOpenWindowMessage);
+        }
+
+        private void ProcessOpenWindowMessage(OpenWindowMessage message)
+        {
+            var windowVM = ServiceLocator.Current.GetInstance<ImagesViewerViewModel>();
+            windowVM.FilePath = message.FilePath;
+
+            var modalWindow = new ImagesViewerView()
+            {
+                DataContext = windowVM
+            };
+
+            modalWindow.Show();
         }
     }
 }
