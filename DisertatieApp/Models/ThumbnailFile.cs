@@ -1,4 +1,4 @@
-﻿namespace DisertatieApp.Presentation_Layer.Models
+﻿namespace DisertatieApp.Models
 {
     public class ThumbnailFile
     {

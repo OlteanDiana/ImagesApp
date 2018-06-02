@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace DisertatieApp.Presentation_Layer.Views
+namespace DisertatieApp.Views
 {
     /// <summary>
     /// Interaction logic for ThumbnailCointainerView.xaml

@@ -1,23 +1,28 @@
-﻿using DisertatieApp.Base_Classes;
-using DisertatieApp.Presentation_Layer.Models;
-using DisertatieApp.Utilities;
+﻿using DisertatieApp.Utilities;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using System.Windows.Forms;
 using System.IO;
+using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Messaging;
+using DisertatieApp.Messages;
+using DisertatieApp.Models;
 
-namespace DisertatieApp.Presentation_Layer.ViewModels
+namespace DisertatieApp.ViewModels
 {
-    public class ThumbnailContainerViewModel : ViewModelsBase
+    public class ThumbnailContainerViewModel : ViewModelBase
     {
         private ICommand _openFileCmd;
         private string _folderPath;
         private FolderBrowserDialog _folderBrowser;
         private string[] _filters = new string[] { "jpg", "jpeg", "png", "gif", "tiff", "bmp" };
+        private ICommand _openViewerCmd;
 
         public ObservableCollection<ThumbnailFile> Images { get; set; }
 
         public ICommand OpenFileCmd { get { return _openFileCmd; } }
+
+        public ICommand OpenViewerCmd { get { return _openViewerCmd; } }
 
         public string FolderPath
         {
@@ -25,7 +30,7 @@ namespace DisertatieApp.Presentation_Layer.ViewModels
             set
             {
                 _folderPath = value;
-                OnPropertyChanged("FolderPath");
+                RaisePropertyChanged(() => FolderPath);
             }
         }
 
@@ -33,7 +38,18 @@ namespace DisertatieApp.Presentation_Layer.ViewModels
         {
             _folderBrowser =  new FolderBrowserDialog();
             _openFileCmd = new RelayCommand(OpenFile);
+            _openViewerCmd = new RelayCommand(OpenViewer);
             Images = new ObservableCollection<ThumbnailFile>();
+        }
+
+        private void OpenViewer(object obj)
+        {
+            Messenger.Default
+                     .Send(
+                            new OpenWindowMessage()
+                            {
+                                FilePath = obj.ToString()
+                            });
         }
 
         private void OpenFile(object obj)
@@ -52,6 +68,8 @@ namespace DisertatieApp.Presentation_Layer.ViewModels
 
         private void GetListOfImages()
         {
+            Images.Clear();
+
             foreach (string filter in _filters)
             {
                 string[] images = Directory.GetFiles(_folderPath, string.Format("*.{0}", filter), SearchOption.AllDirectories);
