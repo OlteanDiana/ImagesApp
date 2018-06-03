@@ -4,12 +4,12 @@ using GalaSoft.MvvmLight.Messaging;
 
 namespace DisertatieApp.Utilities
 {
-    public class MessageMediator
+    public class OpenViewMessageMediator
     {
         private ViewModelLocator _locator;
 
 
-        public MessageMediator(ViewModelLocator vmLocator)
+        public OpenViewMessageMediator(ViewModelLocator vmLocator)
         {
             _locator = vmLocator;
             RegisterMessages();

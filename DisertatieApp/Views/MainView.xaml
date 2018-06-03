@@ -6,8 +6,41 @@
     Height="350" 
     Width="500"
     DataContext="{Binding Source={StaticResource Locator}, Path=MainVM}">
-    <Grid HorizontalAlignment="Stretch"
-          VerticalAlignment="Stretch">
-        <views:ThumbnailContainerView/>
+    <Grid
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Button 
+            Margin="10,10,10,10"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Grid.Row="0"
+            Grid.Column="0"
+            Width="100"
+            Content="Select folder"
+            Command="{Binding OpenFolderBrowserCmd}"/>
+
+        <Button 
+            Margin="10,10,10,10"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Grid.Row="0"
+            Grid.Column="1"
+            Width="100"
+            Content="See movie"
+            IsEnabled="{Binding IsMovieButtonEnabled}"
+            Command="{Binding OpenMovieViewCmd}"/>
+        
+        <views:ThumbnailContainerView 
+            Grid.Row="1" 
+            Grid.Column="0" 
+            Grid.ColumnSpan="2"/>
     </Grid>
 </Window>
