@@ -1,8 +1,5 @@
-﻿using DisertatieApp.Messages;
-using GalaSoft.MvvmLight.Messaging;
-using GalaSoft.MvvmLight.Threading;
+﻿using GalaSoft.MvvmLight.Threading;
 using System.Windows;
-using System;
 
 namespace DisertatieApp
 {

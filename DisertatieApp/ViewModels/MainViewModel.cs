@@ -26,7 +26,8 @@ namespace DisertatieApp.ViewModels
             }
 
             var windowVM = _locator.ViewerVM;
-            windowVM.FilePath = message.FilePath;
+            windowVM.CurrentFilePath = message.CurrentFilePath;
+            windowVM.Files = message.Files;
 
             var modalWindow = _locator.Viewer;
             modalWindow.DataContext = windowVM;

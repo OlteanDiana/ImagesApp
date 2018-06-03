@@ -1,23 +1,163 @@
-﻿using GalaSoft.MvvmLight;
+﻿using DisertatieApp.Models;
+using DisertatieApp.Utilities;
+using GalaSoft.MvvmLight;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Input;
+using System;
+using System.Windows.Media.Imaging;
+using System.Windows.Media;
 
 namespace DisertatieApp.ViewModels
 {
     public class ImagesViewerViewModel : ViewModelBase
     {
-        private string _filePath;
+        private int _currentFileIndex;
 
-        public string FilePath
+        private ImageSource _imgSource;
+        public ImageSource ImgSource
         {
             get
             {
-                return _filePath;
+                return _imgSource;
             }
 
             set
             {
-                _filePath = value;
-                RaisePropertyChanged(() => FilePath);
+                _imgSource = value;
+                RaisePropertyChanged(() => ImgSource);
             }
+        }
+
+        private string _currentFilePath;
+        public string CurrentFilePath
+        {
+            get
+            {
+                return _currentFilePath;
+            }
+
+            set
+            {
+                _currentFilePath = value;
+                ImgSource = SetImageSource();
+                RaisePropertyChanged(() => CurrentFilePath);
+            }
+        }
+
+        private bool _isPreviousEnabled;
+        public bool IsPreviousEnabled
+        {
+            get
+            {
+                return _isPreviousEnabled;
+            }
+
+            set
+            {
+                _isPreviousEnabled = value;
+                RaisePropertyChanged(() => IsPreviousEnabled);
+            }
+        }
+
+        private bool _isNextEnabled;
+        public bool IsNextEnabled
+        {
+            get
+            {
+                return _isNextEnabled;
+            }
+
+            set
+            {
+                _isNextEnabled = value;
+                RaisePropertyChanged(() => IsNextEnabled);
+            }
+        }
+
+        private List<ThumbnailFile> _files;
+        public List<ThumbnailFile> Files
+        {
+            get
+            {
+                return _files;
+            }
+
+            set
+            {
+                _files = value;
+                SetCurrentFileIndex();
+                HandleEnableDisableButtons();
+                RaisePropertyChanged(() => Files);
+            }
+        }
+
+        private ICommand _nextImageCmd;
+        public ICommand NextImageCmd { get { return _nextImageCmd; } }
+
+        private ICommand _previousImageCmd;
+        public ICommand PreviousImageCmd { get { return _previousImageCmd; } }
+
+        public ImagesViewerViewModel()
+        {
+            _nextImageCmd = new RelayCommand(GoToNextImage);
+            _previousImageCmd = new RelayCommand(GoToPreviousImage);
+        }
+
+        private void GoToPreviousImage(object obj)
+        {
+            _currentFileIndex--;
+            CurrentFilePath = Files.ElementAt(_currentFileIndex)?.FilePath;
+            HandleEnableDisableButtons();
+        }
+
+        private void GoToNextImage(object obj)
+        {
+            _currentFileIndex++;
+            CurrentFilePath = Files.ElementAt(_currentFileIndex)?.FilePath;
+            HandleEnableDisableButtons();
+        }
+
+        private void SetCurrentFileIndex()
+        {
+            if (Files == null)
+            {
+                return;
+            }
+
+            _currentFileIndex = Files.IndexOf(Files.Where(f => f.FilePath.Equals(CurrentFilePath)).FirstOrDefault());
+        }
+
+        private void HandleEnableDisableButtons()
+        {
+            if (_currentFileIndex == -1)
+            {
+                return;
+            }
+
+            IsPreviousEnabled = _currentFileIndex != 0;
+            IsNextEnabled = _currentFileIndex != Files.Count - 1;
+        }
+
+
+        private ImageSource SetImageSource()
+        {
+            BitmapImage image = new BitmapImage();
+
+            try
+            {
+                image.BeginInit();
+                image.CacheOption = BitmapCacheOption.OnLoad;
+                image.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+                image.UriSource = new Uri(CurrentFilePath, UriKind.Absolute);
+                image.EndInit();
+            }
+            catch
+            {
+                return null;
+            }
+
+            return image;
         }
     }
 }

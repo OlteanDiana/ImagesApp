@@ -1,8 +1,4 @@
-﻿using DisertatieApp.Messages;
-using GalaSoft.MvvmLight.Messaging;
-using System.Windows;
-using CommonServiceLocator;
-using DisertatieApp.ViewModels;
+﻿using System.Windows;
 
 namespace DisertatieApp.Views
 {
