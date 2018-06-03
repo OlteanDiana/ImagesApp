@@ -2,9 +2,9 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Title="Image viewer"
-    DataContext="{Binding Source={StaticResource Locator}, Path=ViewerVM}"
     WindowState="Maximized"
-    WindowStyle="SingleBorderWindow">
+    WindowStyle="SingleBorderWindow"
+    DataContext="{Binding Source={StaticResource Locator}, Path=ViewerVM}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>

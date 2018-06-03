@@ -11,7 +11,7 @@ namespace DisertatieApp.Utilities
         readonly Action<object> _execute;
         readonly Predicate<object> _canExecute;
 
-        #endregion // Fields
+        #endregion
 
         #region Constructors
 
@@ -38,7 +38,7 @@ namespace DisertatieApp.Utilities
             _canExecute = canExecute;
         }
 
-        #endregion // Constructors
+        #endregion 
 
         #region ICommand Members
 
@@ -50,8 +50,15 @@ namespace DisertatieApp.Utilities
 
         public event EventHandler CanExecuteChanged
         {
-            add { CommandManager.RequerySuggested += value; }
-            remove { CommandManager.RequerySuggested -= value; }
+            add
+            {
+                CommandManager.RequerySuggested += value;
+            }
+
+            remove
+            {
+                CommandManager.RequerySuggested -= value;
+            }
         }
 
         public void Execute(object parameter)
@@ -59,6 +66,6 @@ namespace DisertatieApp.Utilities
             _execute(parameter);
         }
 
-        #endregion // ICommand Members
+        #endregion
     }
 }

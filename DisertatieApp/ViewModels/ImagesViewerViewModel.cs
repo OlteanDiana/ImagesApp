@@ -12,7 +12,13 @@ namespace DisertatieApp.ViewModels
 {
     public class ImagesViewerViewModel : ViewModelBase
     {
+        #region Fields
+
         private int _currentFileIndex;
+
+        #endregion
+
+        #region Properties
 
         private ImageSource _imgSource;
         public ImageSource ImgSource
@@ -93,16 +99,36 @@ namespace DisertatieApp.ViewModels
         }
 
         private ICommand _nextImageCmd;
-        public ICommand NextImageCmd { get { return _nextImageCmd; } }
+        public ICommand NextImageCmd
+        {
+            get
+            {
+                return _nextImageCmd;
+            }
+        }
 
         private ICommand _previousImageCmd;
-        public ICommand PreviousImageCmd { get { return _previousImageCmd; } }
+        public ICommand PreviousImageCmd
+        {
+            get
+            {
+                return _previousImageCmd;
+            }
+        }
+
+        #endregion
+
+        #region Constructor
 
         public ImagesViewerViewModel()
         {
             _nextImageCmd = new RelayCommand(GoToNextImage);
             _previousImageCmd = new RelayCommand(GoToPreviousImage);
         }
+
+        #endregion
+
+        #region CommandHandlers
 
         private void GoToPreviousImage(object obj)
         {
@@ -117,6 +143,10 @@ namespace DisertatieApp.ViewModels
             CurrentFilePath = Files.ElementAt(_currentFileIndex)?.FilePath;
             HandleEnableDisableButtons();
         }
+
+        #endregion
+
+        #region PrivateMethods
 
         private void SetCurrentFileIndex()
         {
@@ -158,6 +188,8 @@ namespace DisertatieApp.ViewModels
             }
 
             return image;
-        }
+        } 
+
+        #endregion
     }
 }

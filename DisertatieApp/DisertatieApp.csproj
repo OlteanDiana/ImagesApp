@@ -82,7 +82,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Messages\OpenWindowMessage.cs" />
+    <Compile Include="Messages\OpenImageViewerMessage.cs" />
+    <Compile Include="Models\FileTypes.cs" />
+    <Compile Include="Utilities\ExtensionMethods.cs" />
+    <Compile Include="Utilities\FolderHandler.cs" />
+    <Compile Include="Utilities\MessageMediator.cs" />
     <Compile Include="Utilities\RelayCommand.cs" />
     <Compile Include="ViewModels\ImagesViewerViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />

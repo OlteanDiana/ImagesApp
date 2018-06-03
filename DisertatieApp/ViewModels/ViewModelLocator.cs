@@ -10,6 +10,8 @@ namespace DisertatieApp.ViewModels
     /// </summary>
     public class ViewModelLocator
     {
+        #region Constructor
+
         /// <summary>
         /// Initializes a new instance of the ViewModelLocator class.
         /// </summary>
@@ -27,6 +29,10 @@ namespace DisertatieApp.ViewModels
             SimpleIoc.Default.Register<ImagesViewerView>();
         }
 
+        #endregion
+
+        #region Properties
+
         public MainViewModel MainVM
         {
             get
@@ -34,7 +40,6 @@ namespace DisertatieApp.ViewModels
                 return ServiceLocator.Current.GetInstance<MainViewModel>();
             }
         }
-
         public MainView Main
         {
             get
@@ -50,7 +55,6 @@ namespace DisertatieApp.ViewModels
                 return ServiceLocator.Current.GetInstance<ThumbnailContainerViewModel>();
             }
         }
-
         public ThumbnailContainerView Container
         {
             get
@@ -66,7 +70,6 @@ namespace DisertatieApp.ViewModels
                 return ServiceLocator.Current.GetInstance<ImagesViewerViewModel>();
             }
         }
-
         public ImagesViewerView Viewer
         {
             get
@@ -75,9 +78,14 @@ namespace DisertatieApp.ViewModels
             }
         }
 
+        #endregion
+
+        #region Cleanup
+
         public static void Cleanup()
         {
-            // TODO Clear the ViewModels
-        }
+        } 
+
+        #endregion
     }
 }
