@@ -1,10 +1,10 @@
-﻿<Window x:Class="DisertatieApp.Views.ImagesViewerView"
+﻿<Window x:Class="DisertatieApp.Views.ImagesView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Title="Image viewer"
     WindowState="Maximized"
     WindowStyle="SingleBorderWindow"
-    DataContext="{Binding Source={StaticResource Locator}, Path=ViewerVM}">
+    DataContext="{Binding Source={StaticResource Locator}, Path=ImageViewerVM}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>

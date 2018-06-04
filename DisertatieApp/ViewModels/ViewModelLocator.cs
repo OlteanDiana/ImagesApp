@@ -25,8 +25,11 @@ namespace DisertatieApp.ViewModels
             SimpleIoc.Default.Register<ThumbnailContainerViewModel>();
             SimpleIoc.Default.Register<ThumbnailContainerView>();
 
-            SimpleIoc.Default.Register<ImagesViewerViewModel>();
-            SimpleIoc.Default.Register<ImagesViewerView>();
+            SimpleIoc.Default.Register<ImagesViewModel>();
+            SimpleIoc.Default.Register<ImagesView>();
+
+            SimpleIoc.Default.Register<MovieViewModel>();
+            SimpleIoc.Default.Register<MovieView>();
         }
 
         #endregion
@@ -63,18 +66,33 @@ namespace DisertatieApp.ViewModels
             }
         }
 
-        public ImagesViewerViewModel ViewerVM
+        public ImagesViewModel ImageViewerVM
         {
             get
             {
-                return ServiceLocator.Current.GetInstance<ImagesViewerViewModel>();
+                return ServiceLocator.Current.GetInstance<ImagesViewModel>();
             }
         }
-        public ImagesViewerView Viewer
+        public ImagesView ImageViewer
         {
             get
             {
-                return ServiceLocator.Current.GetInstance<ImagesViewerView>();
+                return ServiceLocator.Current.GetInstance<ImagesView>();
+            }
+        }
+
+        public MovieViewModel MovieViewerVM
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<MovieViewModel>();
+            }
+        }
+        public MovieView MovieViewer
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<MovieView>();
             }
         }
 

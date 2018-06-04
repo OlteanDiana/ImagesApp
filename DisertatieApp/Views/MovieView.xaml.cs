@@ -3,11 +3,11 @@
 namespace DisertatieApp.Views
 {
     /// <summary>
-    /// Interaction logic for ImagesViewerView.xaml
+    /// Interaction logic for MovieView.xaml
     /// </summary>
-    public partial class ImagesViewerView : Window
+    public partial class MovieView : Window
     {
-        public ImagesViewerView()
+        public MovieView()
         {
             InitializeComponent();
         }

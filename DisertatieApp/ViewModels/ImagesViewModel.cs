@@ -10,7 +10,7 @@ using System.Windows.Media;
 
 namespace DisertatieApp.ViewModels
 {
-    public class ImagesViewerViewModel : ViewModelBase
+    public class ImagesViewModel : ViewModelBase
     {
         #region Fields
 
@@ -46,7 +46,7 @@ namespace DisertatieApp.ViewModels
             set
             {
                 _currentFilePath = value;
-                ImgSource = SetImageSource();
+                ImgSource = CurrentFilePath.SetImageSource();
                 RaisePropertyChanged(() => CurrentFilePath);
             }
         }
@@ -120,7 +120,7 @@ namespace DisertatieApp.ViewModels
 
         #region Constructor
 
-        public ImagesViewerViewModel()
+        public ImagesViewModel()
         {
             _nextImageCmd = new RelayCommand(GoToNextImage);
             _previousImageCmd = new RelayCommand(GoToPreviousImage);
@@ -168,27 +168,6 @@ namespace DisertatieApp.ViewModels
             IsPreviousEnabled = _currentFileIndex != 0;
             IsNextEnabled = _currentFileIndex != Files.Count - 1;
         }
-
-
-        private ImageSource SetImageSource()
-        {
-            BitmapImage image = new BitmapImage();
-
-            try
-            {
-                image.BeginInit();
-                image.CacheOption = BitmapCacheOption.OnLoad;
-                image.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
-                image.UriSource = new Uri(CurrentFilePath, UriKind.Absolute);
-                image.EndInit();
-            }
-            catch
-            {
-                return null;
-            }
-
-            return image;
-        } 
 
         #endregion
     }

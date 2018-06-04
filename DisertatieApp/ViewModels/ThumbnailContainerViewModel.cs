@@ -43,7 +43,7 @@ namespace DisertatieApp.ViewModels
         {
             Messenger.Default
                      .Send(
-                            new OpenImageViewerMessage()
+                            new OpenImageViewMessage()
                             {
                                 CurrentFilePath = file?.ToString(),
                                 Files = new List<ThumbnailFile>(Images)

@@ -5,7 +5,7 @@ namespace DisertatieApp.Messages
 {
     public class OpenMovieViewMessage
     {
-        public Dictionary<string, List<ThumbnailFile>> Images { get; set; }
+        public List<ThumbnailFile> Images { get; set; }
         public int TimeFrame { get; set; }
     }
 }

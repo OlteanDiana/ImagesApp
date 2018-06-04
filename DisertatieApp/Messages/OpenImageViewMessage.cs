@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DisertatieApp.Messages
 {
-    public class OpenImageViewerMessage
+    public class OpenImageViewMessage
     {
         public string CurrentFilePath { get; set; }
         public List<ThumbnailFile> Files { get; set; }

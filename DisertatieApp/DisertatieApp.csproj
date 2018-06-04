@@ -83,18 +83,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Messages\OpenImageViewerMessage.cs" />
+    <Compile Include="Messages\OpenImageViewMessage.cs" />
     <Compile Include="Messages\OpenMovieViewMessage.cs" />
     <Compile Include="Messages\UpdateImagesMessage.cs" />
     <Compile Include="Models\FileTypes.cs" />
-    <Compile Include="Utilities\ExtensionMethods.cs" />
+    <Compile Include="Utilities\UtilitiesMethods.cs" />
     <Compile Include="Utilities\FolderHandler.cs" />
     <Compile Include="Utilities\OpenViewMessageMediator.cs" />
     <Compile Include="Utilities\RelayCommand.cs" />
-    <Compile Include="ViewModels\ImagesViewerViewModel.cs" />
+    <Compile Include="ViewModels\ImagesViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModels\MovieViewModel.cs" />
     <Compile Include="ViewModels\ViewModelLocator.cs" />
-    <Page Include="Views\ImagesViewerView.xaml">
+    <Page Include="Views\ImagesView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -106,13 +107,17 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Views\ImagesViewerView.xaml.cs">
-      <DependentUpon>ImagesViewerView.xaml</DependentUpon>
+    <Compile Include="Views\ImagesView.xaml.cs">
+      <DependentUpon>ImagesView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\MovieView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\ThumbnailContainerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -121,6 +126,9 @@
   <ItemGroup>
     <Compile Include="Models\ThumbnailFile.cs" />
     <Compile Include="ViewModels\ThumbnailContainerViewModel.cs" />
+    <Compile Include="Views\MovieView.xaml.cs">
+      <DependentUpon>MovieView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ThumbnailContainerView.xaml.cs">
       <DependentUpon>ThumbnailContainerView.xaml</DependentUpon>
     </Compile>

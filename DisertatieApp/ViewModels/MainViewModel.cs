@@ -20,6 +20,7 @@ namespace DisertatieApp.ViewModels
         private OpenViewMessageMediator _mediator;
         private FolderBrowserDialog _folderBrowser;
         private FolderHandler _folderHandler;
+        private int _minutesSpan = 5;
 
         #endregion
 
@@ -112,7 +113,7 @@ namespace DisertatieApp.ViewModels
             Messenger.Default
                      .Send(new OpenMovieViewMessage()
                      {
-                         Images = _folderHandler.SimilarImages,
+                         Images = _folderHandler.GetSimilarImagesList(0),
                          TimeFrame = 5
                      });
         }
@@ -124,7 +125,7 @@ namespace DisertatieApp.ViewModels
         private void LoadImagesFromFolder()
         {
             _folderPath = _folderBrowser.SelectedPath;
-            _folderHandler = new FolderHandler(_folderPath);
+            _folderHandler = new FolderHandler(_folderPath, _minutesSpan);
 
             Messenger.Default
                      .Send(new UpdateImagesMessage()
