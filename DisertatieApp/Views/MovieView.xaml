@@ -4,7 +4,7 @@
     Title="Movie viewer"
     WindowState="Maximized"
     WindowStyle="SingleBorderWindow"
-    DataContext="{Binding Source={StaticResource Locator}, Path=ViewerVM}">
+    DataContext="{Binding Source={StaticResource Locator}, Path=MovieViewerVM}">
     <Image 
         Source="{Binding Path=ImgSource, 
                          Mode=TwoWay, 

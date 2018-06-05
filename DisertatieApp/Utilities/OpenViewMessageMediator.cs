@@ -2,6 +2,8 @@
 using DisertatieApp.Messages;
 using DisertatieApp.ViewModels;
 using GalaSoft.MvvmLight.Messaging;
+using System.ComponentModel;
+using System.Windows;
 
 namespace DisertatieApp.Utilities
 {
@@ -48,6 +50,7 @@ namespace DisertatieApp.Utilities
 
             var modalWindow = _locator.ImageViewer;
             modalWindow.DataContext = windowVM;
+            modalWindow.Closing += Window_Closing;
 
             modalWindow.Show();
         }
@@ -65,8 +68,25 @@ namespace DisertatieApp.Utilities
 
             var modalWindow = _locator.MovieViewer;
             modalWindow.DataContext = windowVM;
+            modalWindow.Closing += Window_Closing;
 
             modalWindow.Show();
+        }
+
+        #endregion
+
+        #region PrivateMethods
+
+        private void Window_Closing(object sender, CancelEventArgs e)
+        {
+            var currentWindow = sender as Window;
+            if (currentWindow == null)
+            {
+                return;
+            }
+
+            currentWindow.Visibility = Visibility.Collapsed;
+            e.Cancel = true;
         } 
 
         #endregion

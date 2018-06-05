@@ -102,7 +102,20 @@ namespace DisertatieApp.ViewModels
 
         public static void Cleanup()
         {
-        } 
+            SimpleIoc.Default.Unregister<MainViewModel>();
+            SimpleIoc.Default.Unregister<MainView>();
+
+            SimpleIoc.Default.Unregister<ThumbnailContainerViewModel>();
+            SimpleIoc.Default.Unregister<ThumbnailContainerView>();
+
+            SimpleIoc.Default.Unregister<ImagesViewModel>();
+            SimpleIoc.Default.Unregister<ImagesView>();
+
+            SimpleIoc.Default.Unregister<MovieViewModel>();
+            SimpleIoc.Default.Unregister<MovieView>();
+
+            SimpleIoc.Default.Unregister<ViewModelLocator>();
+        }
 
         #endregion
     }

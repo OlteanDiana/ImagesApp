@@ -114,7 +114,7 @@ namespace DisertatieApp.ViewModels
                      .Send(new OpenMovieViewMessage()
                      {
                          Images = _folderHandler.GetSimilarImagesList(0),
-                         TimeFrame = 5
+                         TimeFrame = 1
                      });
         }
 

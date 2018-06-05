@@ -24,6 +24,7 @@ namespace DisertatieApp.Utilities
 
         #endregion
 
+        #region Properties 
         private List<ThumbnailFile> _images;
         public List<ThumbnailFile> Images
         {
@@ -40,7 +41,9 @@ namespace DisertatieApp.Utilities
             {
                 return _similarImages;
             }
-        }
+        } 
+
+        #endregion
 
         #region Constructor
 

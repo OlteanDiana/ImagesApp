@@ -4,8 +4,6 @@ using GalaSoft.MvvmLight;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
-using System;
-using System.Windows.Media.Imaging;
 using System.Windows.Media;
 
 namespace DisertatieApp.ViewModels
