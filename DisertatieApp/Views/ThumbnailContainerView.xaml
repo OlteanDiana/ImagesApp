@@ -2,10 +2,19 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:models="clr-namespace:DisertatieApp.Models"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     DataContext="{Binding Source={StaticResource Locator}, Path=ContainerVM}">
     <UserControl.Resources>
         <DataTemplate DataType="{x:Type models:ThumbnailFile}">
             <Grid>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseEnter">
+                        <i:InvokeCommandAction 
+                            Command="{Binding RelativeSource={RelativeSource AncestorType=UserControl, Mode=FindAncestor}, Path=DataContext.ShowTooltipCmd }"
+                            CommandParameter="{Binding Path=FilePath}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+
                 <Grid.InputBindings>
                     <MouseBinding 
                         Gesture="LeftDoubleClick" 
@@ -16,8 +25,10 @@
                     Margin="10,10,10,10"
                     BorderBrush="Black" 
                     BorderThickness="2">
-                    <Image>
-                     <Image.Source>
+                    <Image
+                        ToolTip="{Binding RelativeSource={RelativeSource AncestorType=UserControl, Mode=FindAncestor}, Path=DataContext.Tooltip}"
+                        ToolTipService.Placement="Center">
+                        <Image.Source>
                             <BitmapImage 
                                 UriSource="{Binding Path=FilePath}" />
                         </Image.Source>
@@ -32,9 +43,10 @@
         <ItemsControl 
             ItemsSource="{Binding Images}"
             HorizontalAlignment="Left">
+
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <UniformGrid Columns="3"/>
+                    <UniformGrid Columns="4"/>
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
         </ItemsControl>

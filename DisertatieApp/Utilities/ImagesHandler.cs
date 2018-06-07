@@ -8,11 +8,12 @@ using System.Windows;
 
 namespace DisertatieApp.Utilities
 {
-    public class FolderHandler
+    public class ImagesHandler
     {
         #region Constants
 
-        private const string DATE_KEY = "EXtdate:create\0"; 
+        private const string DATE_CREATE_KEY = "EXtdate:create\0";
+        private const string DATE_MODIFY_KEY = "EXtdate:modify\0";
 
         #endregion
 
@@ -41,13 +42,17 @@ namespace DisertatieApp.Utilities
             {
                 return _similarImages;
             }
-        } 
+        }
 
         #endregion
 
         #region Constructor
 
-        public FolderHandler(string folderPath, int minutesSpan)
+        public ImagesHandler()
+        {
+        }
+
+        public ImagesHandler(string folderPath, int minutesSpan)
         {
             _folderPath = folderPath;
             _minutesSpan = minutesSpan;
@@ -68,7 +73,22 @@ namespace DisertatieApp.Utilities
             }
 
             return new List<ThumbnailFile>();
-        } 
+        }
+
+        public string GetImageTooltipInfo(string filePath)
+        {
+            byte[] imageBytes = File.ReadAllBytes(filePath);
+            var asString = Encoding.UTF8.GetString(imageBytes);
+
+            FileMetadata metadata = new FileMetadata()
+            {
+                FileName = Path.GetFileName(filePath),
+                CreationDate = ExtractMetadataInfo(asString, DATE_MODIFY_KEY, 19),
+                ModifiedDate = ExtractMetadataInfo(asString, DATE_MODIFY_KEY, 19)
+            };
+
+            return metadata.GetTooltipString();
+        }
 
         #endregion
 
@@ -143,21 +163,41 @@ namespace DisertatieApp.Utilities
             }
         }
 
-        private DateTime? GetDate(string filePath)
+        private string ExtractMetadataInfo(string imageAsString, string keyword, int size)
         {
             try
             {
-                byte[] imageBytes = File.ReadAllBytes(filePath);
-                var asString = Encoding.UTF8.GetString(imageBytes);
-                var start = asString.IndexOf(DATE_KEY);
-                var end = asString.IndexOf(DATE_KEY) + 19;
+                var start = imageAsString.IndexOf(keyword);
+                var end = imageAsString.IndexOf(keyword) + size;
 
                 if (start == -1 || end == -1)
                 {
                     return null;
                 }
 
-                var creationDate = asString.Substring(start + DATE_KEY.Length, 19);
+                if (keyword.Equals(DATE_CREATE_KEY) 
+                    || keyword.Equals(DATE_MODIFY_KEY))
+                {
+                    return imageAsString.Substring(start + keyword.Length, size).Replace("T", " ");
+                }
+
+                return imageAsString.Substring(start + keyword.Length, size);
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Error while reading metadata.");
+                return null;
+            }
+        }
+
+        private DateTime? GetDate(string filePath)
+        {
+            try
+            {
+                byte[] imageBytes = File.ReadAllBytes(filePath);
+                var asString = Encoding.UTF8.GetString(imageBytes);
+
+                var creationDate = ExtractMetadataInfo(asString, DATE_CREATE_KEY, 19);
                 return ParseDate(creationDate);
             }
             catch (Exception)
@@ -171,7 +211,7 @@ namespace DisertatieApp.Utilities
         {
             try
             {
-                string[] dateTimeParts = creationDate.Split('T');
+                string[] dateTimeParts = creationDate.Split(' ');
 
                 string[] dateParts = dateTimeParts[0].Split('-');
                 int year = int.Parse(dateParts[0].ToString());
@@ -187,7 +227,7 @@ namespace DisertatieApp.Utilities
             }
             catch (Exception)
             {
-                MessageBox.Show("Error while parsing date.");
+                //MessageBox.Show("Error while parsing date.");
                 return null;
             }
         }

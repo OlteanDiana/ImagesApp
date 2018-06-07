@@ -5,8 +5,6 @@
         jpg,
         jpeg,
         png,
-        gif,
-        tiff,
         bmp
     }
 }
