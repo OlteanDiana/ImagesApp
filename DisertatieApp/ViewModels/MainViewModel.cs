@@ -2,8 +2,8 @@ using DisertatieApp.Messages;
 using DisertatieApp.Utilities;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
-using System.Windows.Forms;
 using System.Windows.Input;
+using System.Windows.Forms;
 
 namespace DisertatieApp.ViewModels
 {
@@ -74,6 +74,15 @@ namespace DisertatieApp.ViewModels
             }
         }
 
+        private ICommand _windowClosingCommand;
+        public ICommand WindowClosingCommand
+        {
+            get
+            {
+                return _windowClosingCommand;
+            }
+        }
+
         #endregion
 
         #region Constructor
@@ -84,8 +93,11 @@ namespace DisertatieApp.ViewModels
         public MainViewModel()
         {
             _folderBrowser = new FolderBrowserDialog();
+
             _openFolderBrowserCmd = new RelayCommand(OpenFolderBrowser);
             _openMovieViewCmd = new RelayCommand(OpenMovieView);
+            _windowClosingCommand = new RelayCommand(OnWindowClosing);
+
             _mediator = new OpenViewMessageMediator(System.Windows.Application.Current.TryFindResource(LOCATOR) as ViewModelLocator);
         }
 
@@ -100,7 +112,7 @@ namespace DisertatieApp.ViewModels
             if (result != DialogResult.OK
                 || string.IsNullOrWhiteSpace(_folderBrowser.SelectedPath))
             {
-                MessageBox.Show("No folder selected.");
+                System.Windows.MessageBox.Show("No folder selected.");
                 return;
             }
 
@@ -118,6 +130,11 @@ namespace DisertatieApp.ViewModels
                      });
         }
 
+        private void OnWindowClosing(object obj)
+        {
+            System.Windows.Application.Current.Shutdown();
+        }
+
         #endregion
 
         #region PrivateMethods
@@ -130,7 +147,8 @@ namespace DisertatieApp.ViewModels
             Messenger.Default
                      .Send(new UpdateImagesMessage()
                                 {
-                                    Images = _imagesHandler.Images
+                                    Images = _imagesHandler.Images,
+                                    ImagesHandler = _imagesHandler
                                 });
         }
 

@@ -5,7 +5,7 @@
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     DataContext="{Binding Source={StaticResource Locator}, Path=ContainerVM}">
     <UserControl.Resources>
-        <DataTemplate DataType="{x:Type models:ThumbnailFile}">
+        <DataTemplate DataType="{x:Type models:Thumbnail}">
             <Grid>
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="MouseEnter">
@@ -27,7 +27,10 @@
                     BorderThickness="2">
                     <Image
                         ToolTip="{Binding RelativeSource={RelativeSource AncestorType=UserControl, Mode=FindAncestor}, Path=DataContext.Tooltip}"
-                        ToolTipService.Placement="Center">
+                        ToolTipService.Placement="Relative" 
+                        ToolTipService.PlacementRectangle="50,0,0,0"
+                        ToolTipService.HorizontalOffset="10" 
+                        ToolTipService.VerticalOffset="20">
                         <Image.Source>
                             <BitmapImage 
                                 UriSource="{Binding Path=FilePath}" />
@@ -43,7 +46,6 @@
         <ItemsControl 
             ItemsSource="{Binding Images}"
             HorizontalAlignment="Left">
-
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <UniformGrid Columns="4"/>

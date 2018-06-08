@@ -79,8 +79,8 @@ namespace DisertatieApp.ViewModels
             }
         }
 
-        private List<ThumbnailFile> _files;
-        public List<ThumbnailFile> Files
+        private List<Thumbnail> _files;
+        public List<Thumbnail> Files
         {
             get
             {

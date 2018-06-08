@@ -35,5 +35,35 @@ namespace DisertatieApp.Utilities
 
             return image;
         }
+
+        public static DateTime? ParseToDate(this string creationDate, char partsSplitter, char dateSplitter, char timeSplitter)
+        {
+            try
+            {
+                string[] dateTimeParts = creationDate.Split(partsSplitter);
+
+                string[] dateParts = dateTimeParts[0].Split(dateSplitter);
+                int day = int.Parse(dateParts[0].ToString());
+                int month = int.Parse(dateParts[1].ToString());
+                int year = int.Parse(dateParts[2].ToString());
+
+                string[] timeParts = dateTimeParts[1].Split(timeSplitter);
+                int hour = int.Parse(timeParts[0].ToString());
+                int minute = int.Parse(timeParts[1].ToString());
+                int second = int.Parse(timeParts[2].ToString());
+
+                return new DateTime(year, month, day, hour, minute, second);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public static bool IsNullOrEmpty(this string value)
+        {
+            return value == null || value.Equals(string.Empty);
+        }
+
     }
 }

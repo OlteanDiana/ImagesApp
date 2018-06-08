@@ -35,8 +35,8 @@ namespace DisertatieApp.ViewModels
             }
         }
 
-        private List<ThumbnailFile> _images;
-        public List<ThumbnailFile> Images
+        private List<Thumbnail> _images;
+        public List<Thumbnail> Images
         {
             get
             {

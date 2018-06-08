@@ -1,5 +1,4 @@
-﻿using System;
-using DisertatieApp.Messages;
+﻿using DisertatieApp.Messages;
 using DisertatieApp.ViewModels;
 using GalaSoft.MvvmLight.Messaging;
 using System.ComponentModel;

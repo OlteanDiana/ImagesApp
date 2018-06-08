@@ -11,12 +11,15 @@ namespace DisertatieApp.ViewModels
 {
     public class ThumbnailContainerViewModel : ViewModelBase
     {
-        private ImagesHandler _imagesHandler;
+        #region Fields
 
+        private ImagesHandler _imagesHandler; 
+
+        #endregion
 
         #region Properties
 
-        public ObservableCollection<ThumbnailFile> Images { get; set; }
+        public ObservableCollection<Thumbnail> Images { get; set; }
 
         private ICommand _openViewerCmd;
         public ICommand OpenViewerCmd
@@ -57,11 +60,27 @@ namespace DisertatieApp.ViewModels
 
         public ThumbnailContainerViewModel()
         {
-            _imagesHandler = new ImagesHandler();
             _openViewerCmd = new RelayCommand(OpenViewer);
             _showTooltipCmd = new RelayCommand(ShowTooltip);
-            Images = new ObservableCollection<ThumbnailFile>();
+
+            Images = new ObservableCollection<Thumbnail>();
+
             Messenger.Default.Register<UpdateImagesMessage>(this, ProcessImagesUpdateMessage);
+        }
+
+        #endregion
+
+        #region CommandHandlers
+
+        private void OpenViewer(object file)
+        {
+            Messenger.Default
+                     .Send(
+                            new OpenImageViewMessage()
+                            {
+                                CurrentFilePath = file?.ToString(),
+                                Files = new List<Thumbnail>(Images)
+                            });
         }
 
         private void ShowTooltip(object filePath)
@@ -76,27 +95,14 @@ namespace DisertatieApp.ViewModels
 
         #endregion
 
-        #region CommandHandlers
-
-        private void OpenViewer(object file)
-        {
-            Messenger.Default
-                     .Send(
-                            new OpenImageViewMessage()
-                            {
-                                CurrentFilePath = file?.ToString(),
-                                Files = new List<ThumbnailFile>(Images)
-                            });
-        }
-
-        #endregion
-
         #region MessageHelpers
 
         private void ProcessImagesUpdateMessage(UpdateImagesMessage message)
         {
             Images.Clear();
             Images.AddRange(message.Images);
+
+            _imagesHandler = message.ImagesHandler;
         }
 
         #endregion
