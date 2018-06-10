@@ -5,8 +5,21 @@
     WindowState="Maximized"
     WindowStyle="SingleBorderWindow"
     DataContext="{Binding Source={StaticResource Locator}, Path=MovieViewerVM}">
-    <Image 
-        Source="{Binding Path=ImgSource, 
-                         Mode=TwoWay, 
-                         UpdateSourceTrigger=PropertyChanged}"/>
+    <DockPanel
+        Background="Black">
+        <Menu DockPanel.Dock="Top"
+              FontWeight="Bold"
+              FontSize="14">
+            <MenuItem Header="_Save as...">
+                <MenuItem Header="_Gif" Command="{Binding SaveAsGifCmd}"/>
+            </MenuItem>
+        </Menu>
+        <Image
+            Margin="300,0,300,0"
+            UseLayoutRounding="True"
+            Stretch="Fill"
+            Source="{Binding Path=ImgSource, 
+                             Mode=TwoWay, 
+                             UpdateSourceTrigger=PropertyChanged}"/>
+    </DockPanel>
 </Window>

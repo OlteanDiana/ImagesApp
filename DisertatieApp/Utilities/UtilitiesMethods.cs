@@ -1,8 +1,13 @@
-﻿using System;
+﻿using DisertatieApp.Models;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Drawing;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Linq;
+using System.IO;
+using System.Drawing.Imaging;
 
 namespace DisertatieApp.Utilities
 {
@@ -63,6 +68,28 @@ namespace DisertatieApp.Utilities
         public static bool IsNullOrEmpty(this string value)
         {
             return value == null || value.Equals(string.Empty);
+        }
+
+        public static List<Image> ToImageList(this List<Thumbnail> thumbnails, int width = 0, int height = 0, string newPath = null)
+        {
+            List<Image> images = new List<Image>();
+
+            foreach (string path in thumbnails.Select(i => i.FilePath).ToList())
+            {
+                Image image = Image.FromFile(path);
+
+                if (newPath == null)
+                {
+                    images.Add(image);
+                    continue;
+                }
+
+                Image resizedImage = image.GetThumbnailImage(width, height, null, IntPtr.Zero);
+                resizedImage.Save(Path.Combine(newPath, Path.GetFileName(path)), ImageFormat.Png);
+                images.Add(resizedImage);
+            }
+
+            return images;
         }
 
     }
