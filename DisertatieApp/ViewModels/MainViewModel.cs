@@ -99,6 +99,8 @@ namespace DisertatieApp.ViewModels
             _windowClosingCommand = new RelayCommand(OnWindowClosing);
 
             _mediator = new OpenViewMessageMediator(System.Windows.Application.Current.TryFindResource(LOCATOR) as ViewModelLocator);
+
+            
         }
 
         #endregion
@@ -107,17 +109,19 @@ namespace DisertatieApp.ViewModels
 
         private void OpenFolderBrowser(object obj)
         {
-            DialogResult result = _folderBrowser.ShowDialog();
+            //DialogResult result = _folderBrowser.ShowDialog();
 
-            if (result != DialogResult.OK
-                || string.IsNullOrWhiteSpace(_folderBrowser.SelectedPath))
-            {
-                System.Windows.MessageBox.Show("No folder selected.");
-                return;
-            }
+            //if (result != DialogResult.OK
+            //    || string.IsNullOrWhiteSpace(_folderBrowser.SelectedPath))
+            //{
+            //    System.Windows.MessageBox.Show("No folder selected.");
+            //    return;
+            //}
+
+            //LoadImagesFromFolder();
+            //HandleEnableDisableForMovieButton();
 
             LoadImagesFromFolder();
-            HandleEnableDisableForMovieButton();
         }
 
         private void OpenMovieView(object obj)
@@ -132,6 +136,11 @@ namespace DisertatieApp.ViewModels
 
         private void OnWindowClosing(object obj)
         {
+            Messenger.Default
+                     .Send(new CleanUpViewsMessage()
+                     {
+                         DeleteFiles = true
+                     });
             System.Windows.Application.Current.Shutdown();
         }
 
@@ -141,7 +150,9 @@ namespace DisertatieApp.ViewModels
 
         private void LoadImagesFromFolder()
         {
-            _folderPath = _folderBrowser.SelectedPath;
+            //_folderPath = @"C:\Users\Oltean\Desktop\master\disertatie\movie test images";//_folderBrowser.SelectedPath;
+
+            _folderPath = @"C:\Users\Oltean\Desktop\master\disertatie\poze test";
             _imagesHandler = new ImagesHandler(_folderPath, _minutesSpan);
 
             Messenger.Default

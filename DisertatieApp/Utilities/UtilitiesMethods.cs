@@ -8,6 +8,7 @@ using System.Windows.Media.Imaging;
 using System.Linq;
 using System.IO;
 using System.Drawing.Imaging;
+using System.Drawing.Drawing2D;
 
 namespace DisertatieApp.Utilities
 {
@@ -92,5 +93,32 @@ namespace DisertatieApp.Utilities
             return images;
         }
 
+        public static void RotateImage(this Image img, float rotationAngle, string filePath)
+        {
+            Bitmap bmp = new Bitmap(img.Width, img.Height);
+
+            Graphics gfx = Graphics.FromImage(bmp);
+            gfx.TranslateTransform((float)bmp.Width / 2, (float)bmp.Height / 2);
+            gfx.RotateTransform(rotationAngle);
+            gfx.TranslateTransform(-(float)bmp.Width / 2, -(float)bmp.Height / 2);
+            gfx.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            gfx.DrawImage(img, new Point(0, 0));
+            gfx.Dispose();
+
+            bmp.Save(filePath);
+        }
+
+        public static void DeleteFiles(this List<string> filePaths)
+        {
+            foreach (string file in filePaths)
+            {
+                if (!File.Exists(file))
+                {
+                    continue;
+                }
+
+                File.Delete(file);
+            }
+        }
     }
 }

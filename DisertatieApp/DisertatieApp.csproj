@@ -82,17 +82,30 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="UIAutomationProvider" />
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Custom controls\CropControl.xaml.cs">
+      <DependentUpon>CropControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Custom controls\ImageButton.xaml.cs">
+      <DependentUpon>ImageButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Messages\CleanUpViewsMessage.cs" />
+    <Compile Include="Messages\CroppedImageSavedMessage.cs" />
+    <Compile Include="Messages\DestroyCropAdornerMessage.cs" />
+    <Compile Include="Messages\InitializeCropAdornerMessage.cs" />
     <Compile Include="Messages\OpenImageViewMessage.cs" />
     <Compile Include="Messages\OpenMovieViewMessage.cs" />
+    <Compile Include="Messages\SaveCroppedImageMessage.cs" />
     <Compile Include="Messages\UpdateImagesMessage.cs" />
     <Compile Include="Models\ImageMetadata.cs" />
     <Compile Include="Models\FileTypes.cs" />
@@ -105,6 +118,14 @@
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\MovieViewModel.cs" />
     <Compile Include="ViewModels\ViewModelLocator.cs" />
+    <Page Include="Custom controls\CropControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Custom controls\ImageButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Style\DefaultStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -184,7 +205,29 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Resources\leftArrow.png" />
+    <Resource Include="Resources\rightArrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\rotateLeft.png" />
+    <Resource Include="Resources\rotateRight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\save.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Downloads\UI-Cropping-Image-master\UI-Cropping-Image-Library\CroppingImageLibrary\CroppingImageLibrary.csproj">
+      <Project>{aada3516-ff2a-4c8d-ac3f-43c38acb7be4}</Project>
+      <Name>CroppingImageLibrary</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\crop.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\select.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -84,6 +84,12 @@ namespace DisertatieApp.Utilities
                 return;
             }
 
+            Messenger.Default
+                     .Send(new CleanUpViewsMessage()
+                     {
+                         DeleteFiles = false
+                     });
+
             currentWindow.Visibility = Visibility.Collapsed;
             e.Cancel = true;
         } 

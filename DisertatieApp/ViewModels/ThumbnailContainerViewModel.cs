@@ -6,6 +6,7 @@ using GalaSoft.MvvmLight.Messaging;
 using DisertatieApp.Messages;
 using DisertatieApp.Models;
 using System.Collections.Generic;
+using System;
 
 namespace DisertatieApp.ViewModels
 {
@@ -79,7 +80,7 @@ namespace DisertatieApp.ViewModels
                             new OpenImageViewMessage()
                             {
                                 CurrentFilePath = file?.ToString(),
-                                Files = new List<Thumbnail>(Images)
+                                Files = new List<Thumbnail>(Images),
                             });
         }
 

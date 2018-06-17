@@ -42,7 +42,7 @@ namespace DisertatieApp.Utilities
         #endregion
 
         #region Constructor
-        
+
         public ImagesHandler(string folderPath, int minutesSpan)
         {
             _folderPath = folderPath;
