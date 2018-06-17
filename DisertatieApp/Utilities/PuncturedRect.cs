@@ -1,16 +1,15 @@
 using System;
-using System.Collections.Generic;
 using System.Windows.Shapes;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace DisertatieApp.Utilities
 {
 
-	public class PuncturedRect : Shape
+    public class PuncturedRect : Shape
 	{
 		#region Dependency properties
+
 		public static readonly DependencyProperty RectInteriorProperty =
 			DependencyProperty.Register(
 				"RectInterior",
@@ -26,17 +25,24 @@ namespace DisertatieApp.Utilities
 				null
 			);
 
-		private static object CoerceRectInterior(DependencyObject d, object value)
+		private static object CoerceRectInterior(DependencyObject dependencyObject, object value)
 		{
-			PuncturedRect pr = (PuncturedRect)d;
-			Rect rcExterior = pr.RectExterior;
-			Rect rcProposed = (Rect)value;
-			double left = Math.Max(rcProposed.Left, rcExterior.Left);
-			double top = Math.Max(rcProposed.Top, rcExterior.Top);
-			double width = Math.Min(rcProposed.Right, rcExterior.Right) - left;
-			double height = Math.Min(rcProposed.Bottom, rcExterior.Bottom) - top;
-			rcProposed = new Rect(left, top, width, height);
-			return rcProposed;
+			PuncturedRect puncturedRect = (PuncturedRect)dependencyObject;
+            if (puncturedRect == null)
+            {
+                return null;
+            }
+
+			Rect exterior = puncturedRect.RectExterior;
+			Rect current = (Rect)value;
+
+			double left = Math.Max(current.Left, exterior.Left);
+			double top = Math.Max(current.Top, exterior.Top);
+			double width = Math.Min(current.Right, exterior.Right) - left;
+			double height = Math.Min(current.Bottom, exterior.Bottom) - top;
+            current = new Rect(left, top, width, height);
+
+			return current;
 		}
 
 		public Rect RectInterior
@@ -70,9 +76,11 @@ namespace DisertatieApp.Utilities
 			get { return (Rect)GetValue(RectExteriorProperty); }
 			set { SetValue(RectExteriorProperty, value); }
 		}
+
 		#endregion
 
 		#region Constructors
+
 		public PuncturedRect() : this(new Rect(0, 0, double.MaxValue, double.MaxValue), new Rect()) { }
 
 		public PuncturedRect(Rect rectExterior, Rect rectInterior)
@@ -80,15 +88,18 @@ namespace DisertatieApp.Utilities
 			RectInterior = rectInterior;
 			RectExterior = rectExterior;
 		}
+
 		#endregion
 
 		#region Geometry
+
 		protected override Geometry DefiningGeometry
 		{
 			get
 			{
 				PathGeometry pthgExt = new PathGeometry();
 				PathFigure pthfExt = new PathFigure();
+
 				pthfExt.StartPoint = RectExterior.TopLeft;
 				pthfExt.Segments.Add(new LineSegment(RectExterior.TopRight, false));
 				pthfExt.Segments.Add(new LineSegment(RectExterior.BottomRight, false));
@@ -99,6 +110,7 @@ namespace DisertatieApp.Utilities
 				Rect rectIntSect = Rect.Intersect(RectExterior, RectInterior);
 				PathGeometry pthgInt = new PathGeometry();
 				PathFigure pthfInt = new PathFigure();
+
 				pthfInt.StartPoint = rectIntSect.TopLeft;
 				pthfInt.Segments.Add(new LineSegment(rectIntSect.TopRight, false));
 				pthfInt.Segments.Add(new LineSegment(rectIntSect.BottomRight, false));
@@ -110,6 +122,7 @@ namespace DisertatieApp.Utilities
 				return cmbg;
 			}
 		}
+
 		#endregion
 	}
 }

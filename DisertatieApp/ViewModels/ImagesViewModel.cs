@@ -100,8 +100,6 @@ namespace DisertatieApp.ViewModels
             }
         }
 
-        //public Dictionary<string, Models.ImageMetadata> ImagesMetadata { get; set; }
-
         private string _currentFilePath;
         public string CurrentFilePath
         {
@@ -320,6 +318,10 @@ namespace DisertatieApp.ViewModels
             IsSelectEnabled = true;
         }
 
+        #endregion
+
+        #region MessagesEvents
+
         private void OnCroppedImageSaved(CroppedImageSavedMessage message)
         {
             _tempFilePath = _lastTempFilePath = message.ImagePath;
@@ -343,10 +345,6 @@ namespace DisertatieApp.ViewModels
             Messenger.Default
                      .Send(new SaveCroppedImageMessage());
         }
-
-        #endregion
-
-        #region MessagesEvents
 
         private void OnCleanUp(CleanUpViewsMessage message)
         {

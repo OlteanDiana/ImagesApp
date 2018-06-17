@@ -15,7 +15,7 @@
 
         <Grid 
             Grid.Column="0">
-            <controls:CropControl 
+            <controls:CropImage 
                 Width="{Binding CurrentImageWidth}"
                 Height="{Binding CurrentImageHeight}"
                 ImgSource="{Binding Path=ImgSource, 

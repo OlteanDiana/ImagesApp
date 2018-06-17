@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Shapes;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -10,22 +7,23 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-using Point=System.Drawing.Point;
+using Point = System.Drawing.Point;
 
 namespace DisertatieApp.Utilities
 {
-	public class CroppingAdorner : Adorner
+    public class CroppingAdorner : Adorner
 	{
 		#region Private variables
+
 		// Width of the thumbs.  I know these really aren't "pixels", but px
 		// is still a good mnemonic.
 		private const int _cpxThumbWidth = 6;
 
 		// PuncturedRect to hold the "Cropping" portion of the adorner
-		private PuncturedRect _prCropMask;
+		private PuncturedRect _puncturedRect;
 
 		// Canvas to hold the thumbs so they can be moved in response to the user
-		private Canvas _cnvThumbs;
+		private Canvas _canvas;
 
 		// Cropping adorner uses Thumbs for visual elements.  
 		// The Thumbs have built-in mouse input handling.
@@ -33,23 +31,27 @@ namespace DisertatieApp.Utilities
 		private CropThumb _crtTop, _crtLeft, _crtBottom, _crtRight;
 
 		// To store and manage the adorner's visual children.
-		private VisualCollection _vc;
+		private VisualCollection _visualCollection;
 
 		// DPI for screen
-		private static double s_dpiX, s_dpiY;
+		private static double screenDpiX, screenDpiY;
+
 		#endregion
 
 		#region Properties
+
 		public Rect ClippingRectangle
 		{
 			get
 			{
-				return _prCropMask.RectInterior;
+				return _puncturedRect.RectInterior;
 			}
 		}
+
 		#endregion
 
 		#region Routed Events
+
 		public static readonly RoutedEvent CropChangedEvent = EventManager.RegisterRoutedEvent(
 			"CropChanged",
 			RoutingStrategy.Bubble,
@@ -60,65 +62,43 @@ namespace DisertatieApp.Utilities
 		{
 			add
 			{
-				base.AddHandler(CroppingAdorner.CropChangedEvent, value);
+                AddHandler(CropChangedEvent, value);
 			}
 			remove
 			{
-				base.RemoveHandler(CroppingAdorner.CropChangedEvent, value);
+                RemoveHandler(CropChangedEvent, value);
 			}
 		}
-		#endregion
 
-		#region Dependency Properties
-		static public DependencyProperty FillProperty = Shape.FillProperty.AddOwner(typeof(CroppingAdorner));
-
-		public Brush Fill
-		{
-			get { return (Brush)GetValue(FillProperty); }
-			set { SetValue(FillProperty, value); }
-		}
-
-		private static void FillPropChanged(DependencyObject d, DependencyPropertyChangedEventArgs args)
-		{
-			CroppingAdorner crp = d as CroppingAdorner;
-
-			if (crp != null)
-			{
-				crp._prCropMask.Fill = (Brush)args.NewValue;
-			}
-		}
 		#endregion
 
 		#region Constructor
+
 		static CroppingAdorner()
 		{
-			System.Drawing.Graphics g = System.Drawing.Graphics.FromHwnd((IntPtr)0);
-            Color clr = Colors.Black;
-            clr.A = 110;
-
-            s_dpiX = g.DpiX;
-			s_dpiY = g.DpiY;
-			clr.A = 80;
-			FillProperty.OverrideMetadata(typeof(CroppingAdorner),
-				new PropertyMetadata(
-					new SolidColorBrush(clr),
-					new PropertyChangedCallback(FillPropChanged)));
+			System.Drawing.Graphics graphics = System.Drawing.Graphics.FromHwnd((IntPtr)0);
+            screenDpiX = graphics.DpiX;
+			screenDpiY = graphics.DpiY;
 		}
 
-		public CroppingAdorner(UIElement adornedElement, Rect rcInit)
+		public CroppingAdorner(UIElement adornedElement, Rect initialRect)
 			: base(adornedElement)
 		{
-			_vc = new VisualCollection(this);
-			_prCropMask = new PuncturedRect();
-			_prCropMask.IsHitTestVisible = false;
-			_prCropMask.RectInterior = rcInit;
-			_prCropMask.Fill = Fill;
-			_vc.Add(_prCropMask);
-			_cnvThumbs = new Canvas();
-			_cnvThumbs.HorizontalAlignment = HorizontalAlignment.Stretch;
-			_cnvThumbs.VerticalAlignment = VerticalAlignment.Stretch;
+			_visualCollection = new VisualCollection(this);
+			_puncturedRect = new PuncturedRect();
+			_puncturedRect.IsHitTestVisible = false;
+			_puncturedRect.RectInterior = initialRect;
 
-			_vc.Add(_cnvThumbs);
+            Color color = Colors.Black;
+            color.A = 80;
+            _puncturedRect.Fill = new SolidColorBrush(color);
+			_visualCollection.Add(_puncturedRect);
+
+            _canvas = new Canvas();
+			_canvas.HorizontalAlignment = HorizontalAlignment.Stretch;
+			_canvas.VerticalAlignment = VerticalAlignment.Stretch;
+
+			_visualCollection.Add(_canvas);
 			BuildCorner(ref _crtTop, Cursors.SizeNS);
 			BuildCorner(ref _crtBottom, Cursors.SizeNS);
 			BuildCorner(ref _crtLeft, Cursors.SizeWE);
@@ -140,16 +120,18 @@ namespace DisertatieApp.Utilities
 
 			// We have to keep the clipping interior withing the bounds of the adorned element
 			// so we have to track it's size to guarantee that...
-			FrameworkElement fel = adornedElement as FrameworkElement;
+			FrameworkElement element = adornedElement as FrameworkElement;
 
-			if (fel != null)
+			if (element != null)
 			{
-				fel.SizeChanged += new SizeChangedEventHandler(AdornedElement_SizeChanged);
+				element.SizeChanged += new SizeChangedEventHandler(AdornedElement_SizeChanged);
 			}
 		}
+
 		#endregion
 
 		#region Thumb handlers
+
 		// Generic handler for Cropping
 		private void HandleThumb(
 			double drcL,
@@ -159,7 +141,7 @@ namespace DisertatieApp.Utilities
 			double dx,
 			double dy)
 		{
-			Rect rcInterior = _prCropMask.RectInterior;
+			Rect rcInterior = _puncturedRect.RectInterior;
 
 			if (rcInterior.Width + drcW * dx < 0)
 			{
@@ -177,8 +159,8 @@ namespace DisertatieApp.Utilities
 				rcInterior.Width + drcW * dx,
 				rcInterior.Height + drcH * dy);
 
-			_prCropMask.RectInterior = rcInterior;
-			SetThumbs(_prCropMask.RectInterior);
+			_puncturedRect.RectInterior = rcInterior;
+			SetThumbs(_puncturedRect.RectInterior);
 			RaiseEvent( new RoutedEventArgs(CropChangedEvent, this));
 		}
 
@@ -277,13 +259,15 @@ namespace DisertatieApp.Utilities
 					args.VerticalChange);
 			}
 		}
+
 		#endregion
 
 		#region Other handlers
+
 		private void AdornedElement_SizeChanged(object sender, SizeChangedEventArgs e)
 		{
 			FrameworkElement fel = sender as FrameworkElement;
-			Rect rcInterior = _prCropMask.RectInterior;
+			Rect rcInterior = _puncturedRect.RectInterior;
 			bool fFixupRequired = false;
 			double
 				intLeft = rcInterior.Left,
@@ -318,12 +302,14 @@ namespace DisertatieApp.Utilities
 			}
 			if (fFixupRequired)
 			{
-				_prCropMask.RectInterior = new Rect(intLeft, intTop, intWidth, intHeight);
+				_puncturedRect.RectInterior = new Rect(intLeft, intTop, intWidth, intHeight);
 			}
 		}
+
 		#endregion
 
 		#region Arranging/positioning
+
 		private void SetThumbs(Rect rc)
 		{
 			_crtBottomRight.SetPos(rc.Right, rc.Bottom);
@@ -340,21 +326,23 @@ namespace DisertatieApp.Utilities
 		protected override Size ArrangeOverride(Size finalSize)
 		{
 			Rect rcExterior = new Rect(0, 0, AdornedElement.RenderSize.Width, AdornedElement.RenderSize.Height);
-			_prCropMask.RectExterior = rcExterior;
-			Rect rcInterior = _prCropMask.RectInterior;
-			_prCropMask.Arrange(rcExterior);
+			_puncturedRect.RectExterior = rcExterior;
+			Rect rcInterior = _puncturedRect.RectInterior;
+			_puncturedRect.Arrange(rcExterior);
 
 			SetThumbs(rcInterior);
-			_cnvThumbs.Arrange(rcExterior);
+			_canvas.Arrange(rcExterior);
 			return finalSize;
 		}
+
 		#endregion
 
 		#region Public interface
+
 		public BitmapSource BpsCrop()
 		{
 			Thickness margin = AdornerMargin();
-			Rect rcInterior = _prCropMask.RectInterior;
+			Rect rcInterior = _puncturedRect.RectInterior;
 
 			Point pxFromSize = UnitsToPx(rcInterior.Width, rcInterior.Height);
 
@@ -369,15 +357,17 @@ namespace DisertatieApp.Utilities
 			{
 				return null;
 			}
-			System.Windows.Int32Rect rcFrom = new System.Windows.Int32Rect(pxFromPos.X, pxFromPos.Y, pxFromSize.X, pxFromSize.Y);
+            Int32Rect rcFrom = new Int32Rect(pxFromPos.X, pxFromPos.Y, pxFromSize.X, pxFromSize.Y);
 
-			RenderTargetBitmap rtb = new RenderTargetBitmap(pxWhole.X, pxWhole.Y, s_dpiX, s_dpiY, PixelFormats.Default);
+			RenderTargetBitmap rtb = new RenderTargetBitmap(pxWhole.X, pxWhole.Y, screenDpiX, screenDpiY, PixelFormats.Default);
 			rtb.Render(AdornedElement);
 			return new CroppedBitmap(rtb, rcFrom);
 		}
+
 		#endregion
 
 		#region Helper functions
+
 		private Thickness AdornerMargin()
 		{
 			Thickness thick = new Thickness(0);
@@ -397,57 +387,23 @@ namespace DisertatieApp.Utilities
 			// Set some arbitrary visual characteristics.
 			crt.Cursor = crs;
 
-			_cnvThumbs.Children.Add(crt);
+			_canvas.Children.Add(crt);
 		}
 
 		private Point UnitsToPx(double x, double y)
 		{
-			return new Point((int)(x * s_dpiX / 96), (int)(y * s_dpiY / 96));
+			return new Point((int)(x * screenDpiX / 96), (int)(y * screenDpiY / 96));
 		}
+
 		#endregion
 
 		#region Visual tree overrides
+
 		// Override the VisualChildrenCount and GetVisualChild properties to interface with 
 		// the adorner's visual collection.
-		protected override int VisualChildrenCount { get { return _vc.Count; } }
-		protected override Visual GetVisualChild(int index) { return _vc[index]; }
-		#endregion
+		protected override int VisualChildrenCount { get { return _visualCollection.Count; } }
+		protected override Visual GetVisualChild(int index) { return _visualCollection[index]; }
 
-		#region Internal Classes
-		class CropThumb : Thumb
-		{
-			#region Private variables
-			int _cpx;
-			#endregion
-
-			#region Constructor
-			internal CropThumb(int cpx)
-				: base()
-			{
-				_cpx = cpx;
-			}
-			#endregion
-
-			#region Overrides
-			protected override Visual GetVisualChild(int index)
-			{
-				return null;
-			}
-
-			protected override void OnRender(DrawingContext drawingContext)
-			{
-				drawingContext.DrawRoundedRectangle(Brushes.White, new Pen(Brushes.Black, 1), new Rect(new Size(_cpx, _cpx)), 1, 1);
-			}
-			#endregion
-
-			#region Positioning
-			internal void SetPos(double x, double y)
-			{
-				Canvas.SetTop(this, y - _cpx / 2);
-				Canvas.SetLeft(this, x - _cpx / 2);
-			}
-			#endregion
-		}
 		#endregion
 	}
 

@@ -93,8 +93,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Custom controls\CropControl.xaml.cs">
-      <DependentUpon>CropControl.xaml</DependentUpon>
+    <Compile Include="Custom controls\CropImage.xaml.cs">
+      <DependentUpon>CropImage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Custom controls\ImageButton.xaml.cs">
       <DependentUpon>ImageButton.xaml</DependentUpon>
@@ -110,6 +110,7 @@
     <Compile Include="Models\ImageMetadata.cs" />
     <Compile Include="Models\FileTypes.cs" />
     <Compile Include="Utilities\CroppingAdorner.cs" />
+    <Compile Include="Utilities\CropThumb.cs" />
     <Compile Include="Utilities\MetadataHandler.cs" />
     <Compile Include="Utilities\PuncturedRect.cs" />
     <Compile Include="Utilities\UtilitiesMethods.cs" />
@@ -120,7 +121,7 @@
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\MovieViewModel.cs" />
     <Compile Include="ViewModels\ViewModelLocator.cs" />
-    <Page Include="Custom controls\CropControl.xaml">
+    <Page Include="Custom controls\CropImage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
