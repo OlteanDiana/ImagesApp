@@ -109,7 +109,9 @@
     <Compile Include="Messages\UpdateImagesMessage.cs" />
     <Compile Include="Models\ImageMetadata.cs" />
     <Compile Include="Models\FileTypes.cs" />
+    <Compile Include="Utilities\CroppingAdorner.cs" />
     <Compile Include="Utilities\MetadataHandler.cs" />
+    <Compile Include="Utilities\PuncturedRect.cs" />
     <Compile Include="Utilities\UtilitiesMethods.cs" />
     <Compile Include="Utilities\ImagesHandler.cs" />
     <Compile Include="Utilities\OpenViewMessageMediator.cs" />
@@ -215,12 +217,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\save.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\Downloads\UI-Cropping-Image-master\UI-Cropping-Image-Library\CroppingImageLibrary\CroppingImageLibrary.csproj">
-      <Project>{aada3516-ff2a-4c8d-ac3f-43c38acb7be4}</Project>
-      <Name>CroppingImageLibrary</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\crop.png" />

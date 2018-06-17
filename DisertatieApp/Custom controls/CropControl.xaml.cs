@@ -1,14 +1,13 @@
-﻿using CroppingImageLibrary;
-using DisertatieApp.Messages;
+﻿using DisertatieApp.Messages;
 using GalaSoft.MvvmLight.Messaging;
 using System.Windows.Controls;
 using System.Windows.Documents;
-using System.Windows.Input;
-using System;
 using System.Windows.Media.Imaging;
 using System.IO;
 using System.Windows.Media;
 using System.Windows;
+using DisertatieApp.Utilities;
+using System;
 
 namespace DisertatieApp.Custom_controls
 {
@@ -46,9 +45,9 @@ namespace DisertatieApp.Custom_controls
             DependencyProperty.Register("ImgSource", typeof(ImageSource), typeof(CropControl));
 
 
-
-
-        public CroppingAdorner CroppingAdorner;
+        private CroppingAdorner _clp;
+        private FrameworkElement _felCur = null;
+        private Brush _brOriginal;
 
         public CropControl()
         {
@@ -57,25 +56,28 @@ namespace DisertatieApp.Custom_controls
             Messenger.Default.Register<InitializeCropAdornerMessage>(this, OnInitializeCropAdorner);
             Messenger.Default.Register<SaveCroppedImageMessage>(this, OnSaveCropImage);
             Messenger.Default.Register<DestroyCropAdornerMessage>(this, OnDestroyCropAdorner);
+       }
 
-            CanvasPanel.MouseLeftButtonDown += CanvasPanel_MouseLeftButtonDown;
-        }
 
         private void OnDestroyCropAdorner(DestroyCropAdornerMessage obj)
         {
-            if (CroppingAdorner == null)
+            RemoveCropFromCur();
+        }
+
+        private void RemoveCropFromCur()
+        {
+            if (_clp == null)
             {
                 return;
             }
 
-            AdornerLayer adornerLayer = AdornerLayer.GetAdornerLayer(CanvasPanel);
-            adornerLayer.Remove(CroppingAdorner);
-            CroppingAdorner = null;
+            AdornerLayer aly = AdornerLayer.GetAdornerLayer(_felCur);
+            aly.Remove(_clp);
         }
 
         private void OnSaveCropImage(SaveCroppedImageMessage message)
         {
-            BitmapFrame croppedBitmapFrame = CroppingAdorner.GetCroppedBitmapFrame();
+            BitmapSource croppedBitmapFrame = _clp.BpsCrop();
 
             BitmapEncoder encoder = new PngBitmapEncoder();
             encoder.Frames.Add(BitmapFrame.Create(croppedBitmapFrame));
@@ -96,28 +98,57 @@ namespace DisertatieApp.Custom_controls
                      });
         }
 
-        private void CanvasPanel_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            if (CroppingAdorner == null)
-            {
-                return;
-            }
-
-            CroppingAdorner.CaptureMouse();
-            CroppingAdorner.MouseLeftButtonDownEventHandler(sender, e);
-        }
-
         private void OnInitializeCropAdorner(InitializeCropAdornerMessage obj)
         {
-            if (CroppingAdorner != null)
+            if (_clp != null)
             {
                 return;
             }
 
-            AdornerLayer adornerLayer = AdornerLayer.GetAdornerLayer(CanvasPanel);
-            CroppingAdorner = new CroppingAdorner(CanvasPanel);
-            adornerLayer.Margin = CurrentImage.Margin;
-            adornerLayer.Add(CroppingAdorner);
+            AddCropToElement(currentImage);
+            RefreshCropImage();
+        }
+
+        private void AddCropToElement(FrameworkElement fel)
+        {
+            if (_felCur != null)
+            {
+                RemoveCropFromCur();
+            }
+            Rect rcInterior = new Rect(
+                fel.ActualWidth * 0.2,
+                fel.ActualHeight * 0.2,
+                fel.ActualWidth * 0.6,
+                fel.ActualHeight * 0.6);
+            AdornerLayer aly = AdornerLayer.GetAdornerLayer(fel);
+            _clp = new CroppingAdorner(fel, rcInterior);
+            aly.Add(_clp);
+
+            //imgCrop.Source = _clp.BpsCrop();
+
+            _clp.CropChanged += CropChanged;
+            _felCur = fel;
+        }
+
+        private void RefreshCropImage()
+        {
+            if (_clp != null)
+            {
+                //Rect rc = _clp.ClippingRectangle;
+
+                //tblkClippingRectangle.Text = string.Format(
+                //    "Clipping Rectangle: ({0:N1}, {1:N1}, {2:N1}, {3:N1})",
+                //    rc.Left,
+                //    rc.Top,
+                //    rc.Right,
+                //    rc.Bottom);
+                //imgCrop.Source = _clp.BpsCrop();
+            }
+        }
+
+        private void CropChanged(Object sender, RoutedEventArgs rea)
+        {
+            RefreshCropImage();
         }
     }
 }
