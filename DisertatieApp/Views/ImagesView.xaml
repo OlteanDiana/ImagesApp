@@ -34,25 +34,35 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
             <controls:ImageButton
                 Grid.Column="0"
                 HorizontalAlignment="Right"
-                IsEnabled="{Binding IsSaveEnabled}"
-                ContentImagePath="{Binding SaveImage}"
-                ToolTip="Save"/>
+                IsEnabled="{Binding IsUndoEnabled}"
+                ContentImagePath="{Binding UndoImage}"
+                ButtonCommand="{Binding UndoCmd}"
+                ToolTip="Undo"/>
             
             <controls:ImageButton
                 Grid.Column="1"
+                HorizontalAlignment="Right"
+                IsEnabled="{Binding IsSaveEnabled}"
+                ContentImagePath="{Binding SaveImage}"
+                ButtonCommand="{Binding SaveCmd}"
+                ToolTip="Save"/>
+            
+            <controls:ImageButton
+                Grid.Column="2"
                 HorizontalAlignment="Right"
                 ContentImagePath="{Binding RotateLeftImage}"
                 ButtonCommand="{Binding RotateLeftImageCmd}"
                 ToolTip="Rotate left"/>
 
             <controls:ImageButton
-                Grid.Column="2"
+                Grid.Column="3"
                 HorizontalAlignment="Right"
                 IsEnabled="{Binding IsPreviousEnabled}"
                 ContentImagePath="{Binding LeftArrowImage}"
@@ -60,7 +70,7 @@
                 ToolTip="Previous image"/>
 
             <controls:ImageButton
-                Grid.Column="3"
+                Grid.Column="4"
                 HorizontalAlignment="Left"
                 IsEnabled="{Binding IsNextEnabled}"
                 ContentImagePath="{Binding RightArrowImage}"
@@ -68,14 +78,14 @@
                 ToolTip="Next image"/>
 
             <controls:ImageButton
-                Grid.Column="4"
+                Grid.Column="5"
                 HorizontalAlignment="Left"
                 ContentImagePath="{Binding RotateRightImage}"
                 ButtonCommand="{Binding RotateRightImageCmd}"
                 ToolTip="Rotate right"/>
 
             <controls:ImageButton
-                Grid.Column="5"
+                Grid.Column="6"
                 HorizontalAlignment="Left"
                 IsEnabled="{Binding IsSelectEnabled}"
                 ContentImagePath="{Binding SelectImage}"
@@ -83,7 +93,7 @@
                 ToolTip="Select crop region"/>
 
             <controls:ImageButton
-                Grid.Column="6"
+                Grid.Column="7"
                 HorizontalAlignment="Left"
                 IsEnabled="{Binding IsCropEnabled}"
                 ContentImagePath="{Binding CropImage}"

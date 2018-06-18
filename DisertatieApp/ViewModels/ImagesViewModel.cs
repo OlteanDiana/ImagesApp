@@ -10,6 +10,8 @@ using System.IO;
 using GalaSoft.MvvmLight.Messaging;
 using DisertatieApp.Messages;
 using System;
+using System.Windows.Forms;
+using System.Windows.Media.Imaging;
 
 namespace DisertatieApp.ViewModels
 {
@@ -18,30 +20,43 @@ namespace DisertatieApp.ViewModels
         #region Fields
 
         private int _currentFileIndex;
-        private string _tempFilePath;
-        private string _lastTempFilePath;
-        private List<string> _rotateLeftTempPaths;
-        private List<string> _rotateRightTempPaths;
-        private List<string> _cropTempPaths;
+        private List<string> _currentImageTempPaths;
+        private List<string> _undoTempPaths;
         private List<string> _tempPaths;
 
         #endregion
 
         #region Properties
 
+        private string _lastTempFilePath
+        {
+            get
+            {
+                return _currentImageTempPaths?.ElementAtOrDefault(_currentImageTempPaths.Count - 1);
+            }
+        }
+
+        public string UndoImage
+        {
+            get
+            {
+                return "\\Resources\\undo.png";
+            }
+        }
+
+        public string SaveImage
+        {
+            get
+            {
+                return "\\Resources\\save.png";
+            }
+        }
+
         public string RotateLeftImage
         {
             get
             {
                 return "\\Resources\\rotateLeft.png";
-            }
-        }
-
-        public string RotateRightImage
-        {
-            get
-            {
-                return "\\Resources\\rotateRight.png";
             }
         }
 
@@ -61,6 +76,14 @@ namespace DisertatieApp.ViewModels
             }
         }
 
+        public string RotateRightImage
+        {
+            get
+            {
+                return "\\Resources\\rotateRight.png";
+            }
+        }
+
         public string CropImage
         {
             get
@@ -68,15 +91,7 @@ namespace DisertatieApp.ViewModels
                 return "\\Resources\\crop.png";
             }
         }
-
-        public string SaveImage
-        {
-            get
-            {
-                return "\\Resources\\save.png";
-            }
-        }
-
+        
         public string SelectImage
         {
             get
@@ -192,7 +207,22 @@ namespace DisertatieApp.ViewModels
                 RaisePropertyChanged(() => IsSaveEnabled);
             }
         }
-        
+
+        private bool _isUndoEnabled;
+        public bool IsUndoEnabled
+        {
+            get
+            {
+                return _isUndoEnabled;
+            }
+
+            set
+            {
+                _isUndoEnabled = value;
+                RaisePropertyChanged(() => IsUndoEnabled);
+            }
+        }
+
         private bool _isSelectEnabled;
         public bool IsSelectEnabled
         {
@@ -294,6 +324,24 @@ namespace DisertatieApp.ViewModels
             }
         }
 
+        private ICommand _saveCmd;
+        public ICommand SaveCmd
+        {
+            get
+            {
+                return _saveCmd;
+            }
+        }
+
+        private ICommand _undoCmd;
+        public ICommand UndoCmd
+        {
+            get
+            {
+                return _undoCmd;
+            }
+        }
+
         #endregion
 
         #region Constructor
@@ -303,17 +351,18 @@ namespace DisertatieApp.ViewModels
             Messenger.Default.Register<CleanUpViewsMessage>(this, OnCleanUp);
             Messenger.Default.Register<CroppedImageSavedMessage>(this, OnCroppedImageSaved);
 
-            _nextImageCmd = new RelayCommand(GoToNextImage);
-            _previousImageCmd = new RelayCommand(GoToPreviousImage);
-            _rotateLeftImageCmd = new RelayCommand(OnRotateLeftImage);
-            _rotateRightImageCmd = new RelayCommand(OnRotateRightImage);
-            _selectRegionCmd = new RelayCommand(OnSelectRegion);
-            _cropImageCmd = new RelayCommand(OnCropImage);
+            _nextImageCmd = new RelayCommand(GoToNext);
+            _previousImageCmd = new RelayCommand(GoToPrevious);
+            _rotateLeftImageCmd = new RelayCommand(RotateLeft);
+            _rotateRightImageCmd = new RelayCommand(RotateRight);
+            _selectRegionCmd = new RelayCommand(SelectRegion);
+            _cropImageCmd = new RelayCommand(Crop);
+            _saveCmd = new RelayCommand(Save);
+            _undoCmd = new RelayCommand(Undo);
 
-            _rotateLeftTempPaths = new List<string>();
-            _rotateRightTempPaths = new List<string>();
-            _cropTempPaths = new List<string>();
+            _currentImageTempPaths = new List<string>();
             _tempPaths = new List<string>();
+            _undoTempPaths = new List<string>();
 
             IsSelectEnabled = true;
         }
@@ -324,26 +373,13 @@ namespace DisertatieApp.ViewModels
 
         private void OnCroppedImageSaved(CroppedImageSavedMessage message)
         {
-            _tempFilePath = _lastTempFilePath = message.ImagePath;
+            _undoTempPaths.Add(CurrentFilePath);
 
-            ImgSource = _tempFilePath.SetImageSource();
-            _cropTempPaths.Add(_tempFilePath);
-            IsSaveEnabled = true;
+            CurrentFilePath = message.ImagePath;
+            _currentImageTempPaths.Add(message.ImagePath);
+
+            IsSaveEnabled = IsUndoEnabled = true;
             ResetCrop();
-        }
-
-        private void OnSelectRegion(object obj)
-        {
-            IsSelectEnabled = false;
-            Messenger.Default
-                     .Send(new InitializeCropAdornerMessage());
-            IsCropEnabled = true;
-        }
-
-        private void OnCropImage(object obj)
-        {
-            Messenger.Default
-                     .Send(new SaveCroppedImageMessage());
         }
 
         private void OnCleanUp(CleanUpViewsMessage message)
@@ -351,51 +387,92 @@ namespace DisertatieApp.ViewModels
             if (message.DeleteFiles)
             {
                 _tempPaths.DeleteFiles();
+
+                _currentImageTempPaths.Clear();
+                _undoTempPaths.Clear();
                 _tempPaths.Clear();
+
+                ResetCrop();
                 return;
             }
 
-            HandlePathCleanup();
+            HandleCleanup();
         }
 
         #endregion
 
         #region CommandHandlers
 
-        private void GoToPreviousImage(object obj)
+        private void GoToPrevious(object obj)
         {
             _currentFileIndex--;
-            HandlePathCleanup();
+            HandleCleanup();
 
             CurrentFilePath = Files.ElementAt(_currentFileIndex)?.FilePath;
             HandleEnableDisableButtons();
-
-            ResetCrop();
         }
 
-        private void GoToNextImage(object obj)
+        private void GoToNext(object obj)
         {
             _currentFileIndex++;
-            HandlePathCleanup();
+            HandleCleanup();
 
             CurrentFilePath = Files.ElementAt(_currentFileIndex)?.FilePath;
             HandleEnableDisableButtons();
+        }
 
+        private void RotateLeft(object obj)
+        {
+            RotateImage(false);
+            IsSaveEnabled = IsUndoEnabled = true;
             ResetCrop();
         }
 
-        private void OnRotateLeftImage(object obj)
+        private void RotateRight(object obj)
         {
-            RotateImage(false, _rotateLeftTempPaths);
-
+            RotateImage(true);
+            IsSaveEnabled = IsUndoEnabled = true;
             ResetCrop();
         }
 
-        private void OnRotateRightImage(object obj)
+        private void SelectRegion(object obj)
         {
-            RotateImage(true, _rotateRightTempPaths);
+            IsSelectEnabled = false;
+            Messenger.Default
+                     .Send(new InitializeCropAdornerMessage());
+            IsCropEnabled = true;
+        }
 
-            ResetCrop();
+        private void Crop(object obj)
+        {
+            Messenger.Default
+                     .Send(new SaveCroppedImageMessage());
+        }
+
+        private void Save(object obj)
+        {
+            SaveFileDialog fileDialog = new SaveFileDialog();
+            fileDialog.Title = "Select destination file";
+            fileDialog.Filter = "Bitmap Image (.bmp)|*.bmp|JPEG Image (.jpeg)|*.jpeg|JPG Image (.jpg)|*.jpg|Png Image (.png)|*.png";
+
+            DialogResult dialogResult = fileDialog.ShowDialog();
+            if (dialogResult != DialogResult.OK)
+            {
+                return;
+            }
+
+            string fileName = fileDialog.FileName;
+            BitmapEncoder encoder = Path.GetExtension(fileName)?.Substring(1).GetEncoder();
+
+            File.WriteAllBytes(fileName, ImgSource.ImageSourceToBytes(encoder));
+            IsSaveEnabled = IsUndoEnabled = false;
+        }
+
+        private void Undo(object obj)
+        {
+            CurrentFilePath = _undoTempPaths.ElementAt(_undoTempPaths.Count - 1);
+            _undoTempPaths.RemoveAt(_undoTempPaths.Count - 1);
+            IsUndoEnabled = _undoTempPaths.Count > 0;
         }
 
         #endregion
@@ -423,31 +500,30 @@ namespace DisertatieApp.ViewModels
             IsNextEnabled = _currentFileIndex != Files.Count - 1;
         }
 
-        private void RotateImage(bool positiveRotation, List<string> pathsList)
+        private void RotateImage(bool positiveRotation)
         {
-            _tempFilePath = Path.GetTempFileName();
+            string tempFilePath = Path.GetTempFileName();
 
             Image image = !_lastTempFilePath.IsNullOrEmpty() ? Image.FromFile(_lastTempFilePath)
                                                              : Image.FromFile(CurrentFilePath);
-            image.RotateImage(positiveRotation ? 90 : -90, _tempFilePath);
-            ImgSource = _tempFilePath.SetImageSource();
+            image.RotateImage(positiveRotation ? 90 : -90, tempFilePath);
+            _undoTempPaths.Add(CurrentFilePath);
 
-            pathsList.Add(_tempFilePath);
-            _lastTempFilePath = _tempFilePath;
+            CurrentFilePath = tempFilePath;
+            _currentImageTempPaths.Add(tempFilePath);
+            
             IsSaveEnabled = true;
         }
 
-        private void HandlePathCleanup()
+        private void HandleCleanup()
         {
-            _lastTempFilePath = string.Empty;
+            _tempPaths.AddRange(_currentImageTempPaths);
 
-            _tempPaths.AddRange(_rotateLeftTempPaths);
-            _tempPaths.AddRange(_rotateRightTempPaths);
-            _tempPaths.AddRange(_cropTempPaths);
+            _currentImageTempPaths.Clear();
+            _undoTempPaths.Clear();
 
-            _rotateLeftTempPaths.Clear();
-            _rotateRightTempPaths.Clear();
-            _cropTempPaths.Clear();
+            IsSaveEnabled = IsUndoEnabled = false;
+            ResetCrop();
         }
 
         private void ResetCrop()

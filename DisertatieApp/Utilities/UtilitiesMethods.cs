@@ -120,5 +120,51 @@ namespace DisertatieApp.Utilities
                 File.Delete(file);
             }
         }
+
+        public static BitmapEncoder GetEncoder(this string fileExtension)
+        {
+            if (!Enum.GetNames(typeof(FileTypes)).Contains(fileExtension))
+            {
+                return null;
+            }
+
+            switch(fileExtension.ToLower())
+                {
+                    
+                    case "png":
+                    {
+                        return new PngBitmapEncoder();
+                    }
+                    case "bmp":
+                    {
+                        return new BmpBitmapEncoder();
+                    }
+                    default:
+                    {
+                        return new JpegBitmapEncoder();
+                    }
+                }
+        }
+
+        public static byte[] ImageSourceToBytes(this ImageSource imageSource, BitmapEncoder encoder)
+        {
+            byte[] bytes = null;
+            BitmapSource bitmapSource = imageSource as BitmapSource;
+
+            if (bitmapSource == null)
+            {
+                return bytes;
+            }
+
+            encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
+
+            using (var stream = new MemoryStream())
+            {
+                encoder.Save(stream);
+                bytes = stream.ToArray();
+            }
+
+            return bytes;
+        }
     }
 }
