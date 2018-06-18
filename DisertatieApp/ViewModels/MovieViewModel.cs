@@ -13,17 +13,18 @@ using System.Windows.Interop;
 using System.IO;
 using System.Windows.Forms;
 using System.Linq;
+using GalaSoft.MvvmLight.Messaging;
+using DisertatieApp.Messages;
 
 namespace DisertatieApp.ViewModels
 {
     public class MovieViewModel : ViewModelBase
     {
-        private const string TEMP_PATH = @"C:\Users\Oltean\Desktop\master";
-
         #region Fields
 
-        private int _index = 0;
+        private int _index;
         private DispatcherTimer _dispatcherTimer;
+        private bool _isMovieRunning;
 
         #endregion
 
@@ -86,6 +87,24 @@ namespace DisertatieApp.ViewModels
             }
         }
 
+        private ICommand _modifyTimeFrameCmd;
+        public ICommand ModifyTimeFrameCmd
+        {
+            get
+            {
+                return _modifyTimeFrameCmd;
+            }
+        }
+
+        private ICommand _closeCmd;
+        public ICommand CloseCmd
+        {
+            get
+            {
+                return _closeCmd;
+            }
+        }
+
         #endregion
 
         #region Constructor
@@ -93,32 +112,35 @@ namespace DisertatieApp.ViewModels
         public MovieViewModel()
         {
             _dispatcherTimer = new DispatcherTimer();
+
             _saveAsGifCmd = new RelayCommand(SaveMovieAsGif);
+            _modifyTimeFrameCmd = new RelayCommand(ModifyTimeFrame);
+            _closeCmd = new RelayCommand(CloseScreen);
+
+            Messenger.Default.Register<ModalWindowResultMessage>(this, UpdateTimeFrame);
         }
 
         #endregion
 
-        #region PrivateMethods
+        #region MessagesHandler
 
-        private void StartDisplayingMovie()
+        private void UpdateTimeFrame(ModalWindowResultMessage message)
         {
-            _dispatcherTimer.Tick += dispatcherTimer_Tick;
-            _dispatcherTimer.Interval = new TimeSpan(0, 0, TimeFrame);
-            _dispatcherTimer.Start();
-        }
+            Messenger.Default
+                     .Send(new CloseModalWindowMessage());
 
-        private void dispatcherTimer_Tick(object sender, EventArgs e)
-        {
-            _index++;
-            if (Images.Count <= _index)
+            int timeFrame = message.TimeFrame;
+            if (timeFrame == 0)
             {
-                _dispatcherTimer.Stop();
-                _index = 0;
                 return;
             }
 
-            ImgSource = Images[_index].FilePath.SetImageSource();
-        }
+            TimeFrame = timeFrame;
+        } 
+
+        #endregion
+
+        #region CommandHandlers
 
         private void SaveMovieAsGif(object obj)
         {
@@ -134,21 +156,72 @@ namespace DisertatieApp.ViewModels
                     return;
                 }
 
-                CreateGIF(Images.ToImageList(400, 400, TEMP_PATH), fileDialog.FileName);
-                System.Windows.Forms.MessageBox.Show("Gif created!");
-                DeleteTempImages();
+                string tempFilePath = Path.GetTempPath();
+                CreateGIF(Images.ToImageList(500, 500, tempFilePath), fileDialog.FileName);
+                System.Windows.MessageBox.Show("Gif created!");
+                DeleteTempImages(tempFilePath);
             }
             catch (Exception ex)
             {
-                System.Windows.Forms.MessageBox.Show(ex.Message);
+                System.Windows.MessageBox.Show(ex.Message);
             }
         }
 
-        private void DeleteTempImages()
+        private void ModifyTimeFrame(object obj)
+        {
+            if (_isMovieRunning)
+            {
+                ResetTimer();
+            }
+
+            Messenger.Default
+                     .Send(new OpenModalWindowMessage());
+        }
+
+        private void CloseScreen(object obj)
+        {
+            Messenger.Default
+                     .Send(new CloseMovieWindowMessage());
+        }
+
+        #endregion
+
+        #region PrivateMethods
+
+        private void StartDisplayingMovie()
+        {
+            _index = 0;
+            _isMovieRunning = true;
+
+            _dispatcherTimer.Tick += dispatcherTimer_Tick;
+            _dispatcherTimer.Interval = new TimeSpan(0, 0, TimeFrame);
+            _dispatcherTimer.Start();
+        }
+
+        private void dispatcherTimer_Tick(object sender, EventArgs e)
+        {
+            _index++;
+            if (Images.Count <= _index)
+            {
+                ResetTimer();
+                return;
+            }
+
+            ImgSource = Images[_index].FilePath.SetImageSource();
+        }
+
+        private void ResetTimer()
+        {
+            _dispatcherTimer.Stop();
+            _isMovieRunning = false;
+            _index = 0;
+        }
+
+        private void DeleteTempImages(string tempFilePath)
         {
             foreach (string path in Images.Select(i => i.FilePath).ToList())
             {
-                File.Delete(Path.Combine(TEMP_PATH, Path.GetFileName(path)));
+                File.Delete(Path.Combine(tempFilePath, Path.GetFileName(path)));
             }
         }
 
@@ -175,6 +248,7 @@ namespace DisertatieApp.ViewModels
                 System.Windows.Forms.MessageBox.Show(ex.Message);
             }
         }
+
         #endregion
     }
 }

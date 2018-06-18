@@ -96,14 +96,21 @@
     <Compile Include="Custom controls\CropImage.xaml.cs">
       <DependentUpon>CropImage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Custom controls\CustomDialog.xaml.cs">
+      <DependentUpon>CustomDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Custom controls\ImageButton.xaml.cs">
       <DependentUpon>ImageButton.xaml</DependentUpon>
     </Compile>
     <Compile Include="Messages\CleanUpViewsMessage.cs" />
+    <Compile Include="Messages\CloseModalWindowMessage.cs" />
+    <Compile Include="Messages\CloseMovieWindowMessage.cs" />
     <Compile Include="Messages\CroppedImageSavedMessage.cs" />
     <Compile Include="Messages\DestroyCropAdornerMessage.cs" />
     <Compile Include="Messages\InitializeCropAdornerMessage.cs" />
+    <Compile Include="Messages\ModalWindowResultMessage.cs" />
     <Compile Include="Messages\OpenImageViewMessage.cs" />
+    <Compile Include="Messages\OpenModalWindowMessage.cs" />
     <Compile Include="Messages\OpenMovieViewMessage.cs" />
     <Compile Include="Messages\SaveCroppedImageMessage.cs" />
     <Compile Include="Messages\UpdateImagesMessage.cs" />
@@ -115,7 +122,7 @@
     <Compile Include="Utilities\PuncturedRect.cs" />
     <Compile Include="Utilities\UtilitiesMethods.cs" />
     <Compile Include="Utilities\ImagesHandler.cs" />
-    <Compile Include="Utilities\OpenViewMessageMediator.cs" />
+    <Compile Include="Utilities\ViewsMediator.cs" />
     <Compile Include="Utilities\RelayCommand.cs" />
     <Compile Include="ViewModels\ImagesViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
@@ -125,11 +132,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Custom controls\ImageButton.xaml">
+    <Page Include="Custom controls\CustomDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Style\DefaultStyle.xaml">
+    <Page Include="Custom controls\ImageButton.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

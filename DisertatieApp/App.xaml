@@ -9,9 +9,6 @@
     StartupUri="Views/MainView.xaml">
     <Application.Resources>
         <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Style\DefaultStyle.xaml"/>
-            </ResourceDictionary.MergedDictionaries>
         <vm:ViewModelLocator x:Key="Locator" d:IsDataSource="True"/>
     </ResourceDictionary>
   </Application.Resources>

@@ -1,0 +1,58 @@
+﻿<UserControl 
+    x:Name="modalDialog"
+    x:Class="DisertatieApp.Custom_controls.CustomDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Width="Auto"
+    Height="Auto">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <Label 
+            Margin="0,30,0,10"
+            Grid.Row="0"
+            Grid.Column="0"
+            Content="Time frame:"
+            HorizontalAlignment="Right"
+            VerticalContentAlignment="Center"/>
+        <ComboBox
+            x:Name="cmbTime"
+            Grid.Row="0"
+            Grid.Column="1"
+            Margin="0,30,0,10"
+            HorizontalAlignment="Left"
+            Width="100"
+            ItemsSource="{Binding Path=CmbItems, ElementName=modalDialog, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <Button 
+            x:Name="buttonSelect"
+            Content="Select"
+            Grid.Row="1"
+            Grid.Column="0"
+            Margin="5,20,0,0"
+            Width="100"
+            HorizontalAlignment="Left"
+            HorizontalContentAlignment="Center"
+            VerticalAlignment="Bottom"
+            Click="buttonSelect_Click"/>
+
+        <Button 
+            x:Name="buttonCancel"
+            Content="Cancel"
+            Grid.Row="1"
+            Grid.Column="1"
+            Margin="25,20,5,0"
+            Width="100"
+            HorizontalAlignment="Right"
+            HorizontalContentAlignment="Center"
+            VerticalAlignment="Bottom"
+            Click="buttonCancel_Click"/>
+    </Grid>
+</UserControl>
