@@ -140,6 +140,12 @@ namespace DisertatieApp.Utilities
                     continue;
                 }
 
+                if (_similarImages.Count == 0)
+                {
+                    _similarImages.Add((DateTime)date, new List<Thumbnail>() { image });
+                    continue;
+                }
+
                 DateTime? referenceDate = GetClosestDate((DateTime)date, _minutesSpan);
                 if ( referenceDate == null)
                 {

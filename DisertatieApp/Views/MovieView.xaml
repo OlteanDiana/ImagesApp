@@ -10,9 +10,12 @@
               FontWeight="Bold"
               FontSize="14">
             <MenuItem Header="_Options">
+                <MenuItem Header="_Play" Command="{Binding PlayCmd}" IsEnabled="{Binding IsPlayEnabled}"/>
+                <MenuItem Header="_Replay" Command="{Binding ReplayCmd}" IsEnabled="{Binding IsReplayEnabled}"/>
+                <MenuItem Header="_Stop" Command="{Binding StopCmd}" IsEnabled="{Binding IsStopEnabled}"/>
                 <MenuItem Header="_Save as Gif" Command="{Binding SaveAsGifCmd}"/>
                 <MenuItem Header="_Modify time frame" Command="{Binding ModifyTimeFrameCmd}"/>
-                <MenuItem Header="_Close viewer" Command="{Binding CloseCmd}"/>
+                <MenuItem Header="_Close" Command="{Binding CloseCmd}"/>
             </MenuItem>
         </Menu>
         <Image

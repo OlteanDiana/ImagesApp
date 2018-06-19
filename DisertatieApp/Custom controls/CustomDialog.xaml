@@ -19,7 +19,7 @@
             Margin="0,30,0,10"
             Grid.Row="0"
             Grid.Column="0"
-            Content="Time frame:"
+            Content="Time (miliseconds):"
             HorizontalAlignment="Right"
             VerticalContentAlignment="Center"/>
         <ComboBox

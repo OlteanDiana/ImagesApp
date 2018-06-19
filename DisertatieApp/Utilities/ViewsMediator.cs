@@ -70,6 +70,8 @@ namespace DisertatieApp.Utilities
             var windowVM = _locator.MovieViewerVM;
             windowVM.Images = message.Images;
             windowVM.TimeFrame = message.TimeFrame;
+            windowVM.ImagesSource = message.ImagesSource;
+            windowVM.ImgSource = message.ImgSource;
 
             var modalWindow = _locator.MovieViewer;
             modalWindow.DataContext = windowVM;

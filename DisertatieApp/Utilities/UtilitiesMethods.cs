@@ -42,6 +42,18 @@ namespace DisertatieApp.Utilities
             return image;
         }
 
+        public static List<ImageSource> ToImageSourceList(this List<Thumbnail> thumbnails)
+        {
+            List<ImageSource> imagesSource = new List<ImageSource>();
+
+            foreach (Thumbnail image in thumbnails)
+            {
+                imagesSource.Add(image.FilePath.SetImageSource());
+            }
+
+            return imagesSource;
+        }
+
         public static DateTime? ParseToDate(this string creationDate, char partsSplitter, char dateSplitter, char timeSplitter)
         {
             try
@@ -185,6 +197,20 @@ namespace DisertatieApp.Utilities
                 {
                     stream.WriteTo(fileStream);
                 }
+            }
+        }
+
+        public static IEnumerable<int> Range(int min, int max, int step)
+        {
+            int i;
+            for (i = min; i <= max; i += step)
+            { 
+                yield return i;
+            }
+
+            if (i != max + step)
+            {
+                yield return max;
             }
         }
     }

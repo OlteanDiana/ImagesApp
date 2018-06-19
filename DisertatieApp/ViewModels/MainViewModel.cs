@@ -4,6 +4,8 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
 using System.Windows.Input;
 using System.Windows.Forms;
+using System.Collections.Generic;
+using DisertatieApp.Models;
 
 namespace DisertatieApp.ViewModels
 {
@@ -122,11 +124,15 @@ namespace DisertatieApp.ViewModels
 
         private void OpenMovieView(object obj)
         {
+            List<Thumbnail> images = _imagesHandler.GetSimilarImagesList(0);
+
             Messenger.Default
                      .Send(new OpenMovieViewMessage()
                      {
-                         Images = _imagesHandler.GetSimilarImagesList(0),
-                         TimeFrame = 1
+                         Images = images,
+                         TimeFrame = 1000,
+                         ImagesSource = images.ToImageSourceList(),
+                         ImgSource = images[0].FilePath.SetImageSource()
                      });
         }
 

@@ -6,10 +6,6 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using System;
 using System.Windows.Input;
-using System.Windows.Media.Imaging;
-using System.Drawing;
-using System.Windows;
-using System.Windows.Interop;
 using System.IO;
 using System.Windows.Forms;
 using System.Linq;
@@ -24,7 +20,6 @@ namespace DisertatieApp.ViewModels
 
         private int _index;
         private DispatcherTimer _dispatcherTimer;
-        private bool _isMovieRunning;
 
         #endregion
 
@@ -57,8 +52,21 @@ namespace DisertatieApp.ViewModels
             set
             {
                 _images = value;
-                ImgSource = Images.Count > _index ? Images[_index].FilePath.SetImageSource()
-                                                  : null;
+                RaisePropertyChanged(() => Images);
+            }
+        }
+
+        private List<ImageSource> _imagesSource;
+        public List<ImageSource> ImagesSource
+        {
+            get
+            {
+                return _imagesSource;
+            }
+
+            set
+            {
+                _imagesSource = value;
                 RaisePropertyChanged(() => Images);
             }
         }
@@ -105,19 +113,110 @@ namespace DisertatieApp.ViewModels
             }
         }
 
+        private ICommand _playCmd;
+        public ICommand PlayCmd
+        {
+            get
+            {
+                return _playCmd;
+            }
+        }
+
+        private bool _isPlayEnabled;
+        public bool IsPlayEnabled
+        {
+            get
+            {
+                return _isPlayEnabled;
+            }
+
+            set
+            {
+                _isPlayEnabled = value;
+                RaisePropertyChanged(() => IsPlayEnabled);
+            }
+        }
+
+        private ICommand _replayCmd;
+        public ICommand ReplayCmd
+        {
+            get
+            {
+                return _replayCmd;
+            }
+        }
+
+        private bool _isReplayEnabled;
+        public bool IsReplayEnabled
+        {
+            get
+            {
+                return _isReplayEnabled;
+            }
+
+            set
+            {
+                _isReplayEnabled = value;
+                RaisePropertyChanged(() => IsReplayEnabled);
+            }
+        }
+
+        private ICommand _stopCmd;
+        public ICommand StopCmd
+        {
+            get
+            {
+                return _stopCmd;
+            }
+        }
+
+        private bool _isStopEnabled;
+        public bool IsStopEnabled
+        {
+            get
+            {
+                return _isStopEnabled;
+            }
+
+            set
+            {
+                _isStopEnabled = value;
+                RaisePropertyChanged(() => IsStopEnabled);
+            }
+        }
+
         #endregion
 
         #region Constructor
 
         public MovieViewModel()
         {
-            _dispatcherTimer = new DispatcherTimer();
 
             _saveAsGifCmd = new RelayCommand(SaveMovieAsGif);
             _modifyTimeFrameCmd = new RelayCommand(ModifyTimeFrame);
             _closeCmd = new RelayCommand(CloseScreen);
+            _playCmd = new RelayCommand(Play);
+            _replayCmd = new RelayCommand(Replay);
+            _stopCmd = new RelayCommand(Stop);
+
+            IsStopEnabled = true;
 
             Messenger.Default.Register<ModalWindowResultMessage>(this, UpdateTimeFrame);
+        }
+
+        private void Stop(object obj)
+        {
+            ResetTimer(false);
+        }
+
+        private void Replay(object obj)
+        {
+            StartDisplayingMovie();
+        }
+
+        private void Play(object obj)
+        {
+            StartDisplayingMovie();
         }
 
         #endregion
@@ -157,21 +256,24 @@ namespace DisertatieApp.ViewModels
                 }
 
                 string tempFilePath = Path.GetTempPath();
-                CreateGIF(Images.ToImageList(500, 500, tempFilePath), fileDialog.FileName);
-                System.Windows.MessageBox.Show("Gif created!");
+                Images.ToImageList(500, 500, tempFilePath)
+                      .SaveAnimatedGifImage(fileDialog.FileName, 
+                                            TimeSpan.FromMilliseconds(TimeFrame));
+                MessageBox.Show("Gif created!");
+
                 DeleteTempImages(tempFilePath);
             }
             catch (Exception ex)
             {
-                System.Windows.MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message);
             }
         }
 
         private void ModifyTimeFrame(object obj)
         {
-            if (_isMovieRunning)
+            if (IsStopEnabled)
             {
-                ResetTimer();
+                ResetTimer(true);
             }
 
             Messenger.Default
@@ -180,6 +282,7 @@ namespace DisertatieApp.ViewModels
 
         private void CloseScreen(object obj)
         {
+            ResetTimer(true);
             Messenger.Default
                      .Send(new CloseMovieWindowMessage());
         }
@@ -190,31 +293,41 @@ namespace DisertatieApp.ViewModels
 
         private void StartDisplayingMovie()
         {
-            _index = 0;
-            _isMovieRunning = true;
+            IsStopEnabled = true;
+            IsReplayEnabled = false;
+            IsPlayEnabled = false;
 
+            _dispatcherTimer = new DispatcherTimer();
             _dispatcherTimer.Tick += dispatcherTimer_Tick;
-            _dispatcherTimer.Interval = new TimeSpan(0, 0, TimeFrame);
+            _dispatcherTimer.Interval = TimeSpan.FromMilliseconds(TimeFrame);
             _dispatcherTimer.Start();
         }
 
         private void dispatcherTimer_Tick(object sender, EventArgs e)
         {
             _index++;
-            if (Images.Count <= _index)
+            if (ImagesSource.Count <= _index)
             {
-                ResetTimer();
+                ResetTimer(true);
                 return;
             }
 
-            ImgSource = Images[_index].FilePath.SetImageSource();
+            ImgSource = ImagesSource[_index];
         }
 
-        private void ResetTimer()
+        private void ResetTimer(bool resetIndex)
         {
-            _dispatcherTimer.Stop();
-            _isMovieRunning = false;
-            _index = 0;
+            if (resetIndex)
+            {
+                _index = 0;
+            }
+
+            _dispatcherTimer?.Stop();
+            _dispatcherTimer = null;
+
+            IsReplayEnabled = _index == 0;
+            IsStopEnabled = false;
+            IsPlayEnabled = _index != 0;
         }
 
         private void DeleteTempImages(string tempFilePath)
@@ -222,18 +335,6 @@ namespace DisertatieApp.ViewModels
             foreach (string path in Images.Select(i => i.FilePath).ToList())
             {
                 File.Delete(Path.Combine(tempFilePath, Path.GetFileName(path)));
-            }
-        }
-
-        public void CreateGIF(List<Image> images, string path)
-        {
-            try
-            {
-                images.SaveAnimatedGifImage(path, new TimeSpan(0, 0, TimeFrame));
-            }
-            catch (Exception ex)
-            {
-                System.Windows.Forms.MessageBox.Show(ex.Message);
             }
         }
 

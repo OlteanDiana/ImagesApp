@@ -1,4 +1,5 @@
 ﻿using DisertatieApp.Messages;
+using DisertatieApp.Utilities;
 using GalaSoft.MvvmLight.Messaging;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +25,7 @@ namespace DisertatieApp.Custom_controls
         public CustomDialog()
         {
             InitializeComponent();
-            CmbItems = Enumerable.Range(1, 10).ToList();
+            CmbItems = UtilitiesMethods.Range(100, 1000, 100).ToList();
             cmbTime.SelectedIndex = 0;
         }
 

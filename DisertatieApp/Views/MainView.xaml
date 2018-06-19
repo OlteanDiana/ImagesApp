@@ -18,38 +18,21 @@
     <Grid
         HorizontalAlignment="Stretch"
         VerticalAlignment="Stretch">
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        <Button 
-            Margin="10,10,10,10"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Grid.Row="0"
-            Grid.Column="0"
-            Width="100"
-            Content="Select folder"
-            Command="{Binding OpenFolderBrowserCmd}"/>
 
-        <Button 
-            Margin="10,10,10,10"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Grid.Row="0"
-            Grid.Column="1"
-            Width="100"
-            Content="See movie"
-            IsEnabled="{Binding IsMovieButtonEnabled}"
-            Command="{Binding OpenMovieViewCmd}"/>
+        <Menu Grid.Row="0"
+              FontWeight="Bold"
+              FontSize="14">
+            <MenuItem Header="_Options">
+                <MenuItem Header="_Select folder" Command="{Binding OpenFolderBrowserCmd}"/>
+                <MenuItem Header="See _movie" Command="{Binding OpenMovieViewCmd}" IsEnabled="{Binding IsMovieButtonEnabled}"/>
+            </MenuItem>
+        </Menu>
 
-        <views:ThumbnailContainerView 
-            Grid.Row="1" 
-            Grid.Column="0" 
-            Grid.ColumnSpan="2"/>
+        <views:ThumbnailContainerView Grid.Row="1"/>
     </Grid>
 </Window>
