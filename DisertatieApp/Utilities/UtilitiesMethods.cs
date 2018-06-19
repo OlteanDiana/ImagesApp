@@ -166,5 +166,26 @@ namespace DisertatieApp.Utilities
 
             return bytes;
         }
+
+        public static void SaveAnimatedGifImage(this List<Image> images, string path, TimeSpan delay, int repeat = 0)
+        {
+            using (var stream = new MemoryStream())
+            {
+                using (var encoder = new BumpKit.GifEncoder(stream, null, null, repeat))
+                {
+                    foreach (Image image in images)
+                    {
+                        encoder.AddFrame(image, 0, 0, delay);
+                    }
+                }
+
+                stream.Position = 0;
+
+                using (var fileStream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None))
+                {
+                    stream.WriteTo(fileStream);
+                }
+            }
+        }
     }
 }

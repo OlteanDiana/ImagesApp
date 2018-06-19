@@ -229,19 +229,7 @@ namespace DisertatieApp.ViewModels
         {
             try
             {
-                GifBitmapEncoder gifEncoder = new GifBitmapEncoder();
-                foreach (Bitmap bmpImage in images)
-                {
-                    var gifSource = Imaging.CreateBitmapSourceFromHBitmap(
-                                        bmpImage.GetHbitmap(),
-                                        IntPtr.Zero,
-                                        Int32Rect.Empty,
-                                        BitmapSizeOptions.FromEmptyOptions());
-
-                    gifEncoder.Frames.Add(BitmapFrame.Create(gifSource));
-                }
-
-                gifEncoder.Save(new FileStream(path, FileMode.Create));
+                images.SaveAnimatedGifImage(path, new TimeSpan(0, 0, TimeFrame));
             }
             catch (Exception ex)
             {
