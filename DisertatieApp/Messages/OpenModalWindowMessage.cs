@@ -2,5 +2,6 @@
 {
     public class OpenModalWindowMessage
     {
+        public int TimeFrame { get; set; }
     }
 }

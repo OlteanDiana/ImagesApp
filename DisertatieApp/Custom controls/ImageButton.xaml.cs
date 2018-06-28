@@ -32,9 +32,13 @@ namespace DisertatieApp.Custom_controls
 
         #endregion
 
+        #region Constructor
+
         public ImageButton()
         {
             InitializeComponent();
-        }
+        } 
+
+        #endregion
     }
 }

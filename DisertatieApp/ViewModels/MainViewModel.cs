@@ -6,6 +6,7 @@ using System.Windows.Input;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using DisertatieApp.Models;
+using System.Windows;
 
 namespace DisertatieApp.ViewModels
 {
@@ -114,7 +115,7 @@ namespace DisertatieApp.ViewModels
             if (result != DialogResult.OK
                 || string.IsNullOrWhiteSpace(_folderBrowser.SelectedPath))
             {
-                System.Windows.MessageBox.Show("No folder selected.");
+                Xceed.Wpf.Toolkit.MessageBox.Show("No folder selected.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
@@ -144,6 +145,7 @@ namespace DisertatieApp.ViewModels
                          DeleteFiles = true
                      });
             System.Windows.Application.Current.Shutdown();
+            ViewModelLocator.Cleanup();
         }
 
         #endregion

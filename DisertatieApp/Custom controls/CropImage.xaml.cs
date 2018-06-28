@@ -36,7 +36,6 @@ namespace DisertatieApp.Custom_controls
 
         #endregion
 
-
         #region Constructor
 
         public CropImage()
@@ -52,7 +51,7 @@ namespace DisertatieApp.Custom_controls
 
         #region MessagesHandlers
 
-        private void OnInitializeCropAdorner(InitializeCropAdornerMessage obj)
+        private void OnInitializeCropAdorner(InitializeCropAdornerMessage message)
         {
             if (_croppingAdorner != null)
             {
@@ -85,7 +84,7 @@ namespace DisertatieApp.Custom_controls
                      });
         }
 
-        private void OnDestroyCropAdorner(DestroyCropAdornerMessage obj)
+        private void OnDestroyCropAdorner(DestroyCropAdornerMessage message)
         {
             RemoveCrop();
         }

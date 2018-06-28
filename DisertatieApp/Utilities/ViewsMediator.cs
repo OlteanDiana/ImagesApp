@@ -1,9 +1,7 @@
 ﻿using DisertatieApp.Messages;
-using DisertatieApp.ViewModels;
 using GalaSoft.MvvmLight.Messaging;
 using System.ComponentModel;
 using System.Windows;
-using System;
 using DisertatieApp.Custom_controls;
 
 namespace DisertatieApp.Utilities
@@ -80,13 +78,13 @@ namespace DisertatieApp.Utilities
             modalWindow.Show();
         }
 
-        private void OpenModalWindow(OpenModalWindowMessage obj)
+        private void OpenModalWindow(OpenModalWindowMessage message)
         {
             _modal = new Window
             {
                 Title = "Select time frame",
-                Content = new CustomDialog(),
-                Width = 250,
+                Content = new CustomDialog(message.TimeFrame),
+                Width = 255,
                 Height = 150,
                 ResizeMode = ResizeMode.NoResize,
             };
@@ -94,13 +92,13 @@ namespace DisertatieApp.Utilities
             _modal.ShowDialog();
         }
 
-        private void CloseModalWindow(CloseModalWindowMessage obj)
+        private void CloseModalWindow(CloseModalWindowMessage message)
         {
             _modal.Close();
             _modal = null;
         }
 
-        private void CloseMovieView(CloseMovieWindowMessage obj)
+        private void CloseMovieView(CloseMovieWindowMessage message)
         {
             if (_locator == null)
             {

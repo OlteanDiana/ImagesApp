@@ -7,6 +7,7 @@
     Title="Application" 
     Height="600" 
     Width="700"
+    WindowStartupLocation="CenterScreen"
     DataContext="{Binding Source={StaticResource Locator}, Path=MainVM}">
 
     <i:Interaction.Triggers>

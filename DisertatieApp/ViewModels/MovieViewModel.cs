@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using System.Linq;
 using GalaSoft.MvvmLight.Messaging;
 using DisertatieApp.Messages;
+using System.Windows;
 
 namespace DisertatieApp.ViewModels
 {
@@ -259,13 +260,12 @@ namespace DisertatieApp.ViewModels
                 Images.ToImageList(500, 500, tempFilePath)
                       .SaveAnimatedGifImage(fileDialog.FileName, 
                                             TimeSpan.FromMilliseconds(TimeFrame));
-                MessageBox.Show("Gif created!");
-
+                Xceed.Wpf.Toolkit.MessageBox.Show("Gif created!", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
                 DeleteTempImages(tempFilePath);
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                Xceed.Wpf.Toolkit.MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -277,7 +277,10 @@ namespace DisertatieApp.ViewModels
             }
 
             Messenger.Default
-                     .Send(new OpenModalWindowMessage());
+                     .Send(new OpenModalWindowMessage()
+                     {
+                         TimeFrame = TimeFrame
+                     });
         }
 
         private void CloseScreen(object obj)

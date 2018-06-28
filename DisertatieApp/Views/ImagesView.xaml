@@ -13,9 +13,12 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Grid 
+        <Grid
+            x:Name="grdImage"
             Grid.Column="0">
             <controls:CropImage 
+                MaxWidth="{Binding ElementName=grdImage, Path=ActualWidth}"
+                MaxHeight="{Binding ElementName=grdImage, Path=ActualHeight}"
                 Width="{Binding CurrentImageWidth}"
                 Height="{Binding CurrentImageHeight}"
                 ImgSource="{Binding Path=ImgSource, 

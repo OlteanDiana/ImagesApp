@@ -22,10 +22,13 @@
                         CommandParameter="{Binding Path=FilePath}"/>
                 </Grid.InputBindings>
                 <Border 
+                    x:Name="container"
                     Margin="10,10,10,10"
                     BorderBrush="Black" 
                     BorderThickness="2">
                     <Image
+                        Stretch="Fill"
+                        SnapsToDevicePixels="True"
                         ToolTip="{Binding RelativeSource={RelativeSource AncestorType=UserControl, Mode=FindAncestor}, Path=DataContext.Tooltip}"
                         ToolTipService.Placement="Relative" 
                         ToolTipService.PlacementRectangle="50,0,0,0"

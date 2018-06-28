@@ -1,8 +1,9 @@
 using CommonServiceLocator;
+using DisertatieApp.ViewModels;
 using DisertatieApp.Views;
 using GalaSoft.MvvmLight.Ioc;
 
-namespace DisertatieApp.ViewModels
+namespace DisertatieApp.Utilities
 {
     /// <summary>
     /// This class contains static references to all the view models in the
