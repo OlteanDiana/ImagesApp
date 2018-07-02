@@ -20,21 +20,13 @@ namespace DisertatieApp.ViewModels
         #region Fields
 
         private int _currentFileIndex;
-        private List<string> _currentImageTempPaths;
         private List<string> _undoTempPaths;
         private List<string> _tempPaths;
+        private bool _isNewImage;
 
         #endregion
 
         #region Properties
-
-        private string _lastTempFilePath
-        {
-            get
-            {
-                return _currentImageTempPaths?.ElementAtOrDefault(_currentImageTempPaths.Count - 1);
-            }
-        }
 
         public string UndoImage
         {
@@ -127,8 +119,13 @@ namespace DisertatieApp.ViewModels
             {
                 _currentFilePath = value;
                 ImgSource = CurrentFilePath.SetImageSource();
-                CurrentImageHeight = ImgSource.Height;
-                CurrentImageWidth = ImgSource.Width;
+
+                if(_isNewImage)
+                { 
+                    CurrentImageHeight = ImgSource.Height;
+                    CurrentImageWidth = ImgSource.Width;
+                    _isNewImage = false;
+                }
                 RaisePropertyChanged(() => CurrentFilePath);
             }
         }
@@ -360,11 +357,11 @@ namespace DisertatieApp.ViewModels
             _saveCmd = new RelayCommand(Save);
             _undoCmd = new RelayCommand(Undo);
 
-            _currentImageTempPaths = new List<string>();
             _tempPaths = new List<string>();
             _undoTempPaths = new List<string>();
 
             IsSelectEnabled = true;
+            _isNewImage = true;
         }
 
         #endregion
@@ -376,7 +373,6 @@ namespace DisertatieApp.ViewModels
             _undoTempPaths.Add(CurrentFilePath);
 
             CurrentFilePath = message.ImagePath;
-            _currentImageTempPaths.Add(message.ImagePath);
 
             IsSaveEnabled = IsUndoEnabled = true;
             ResetCrop();
@@ -384,11 +380,12 @@ namespace DisertatieApp.ViewModels
 
         private void OnCleanUp(CleanUpViewsMessage message)
         {
+            _isNewImage = false;
+
             if (message.DeleteFiles)
             {
                 _tempPaths.DeleteFiles();
 
-                _currentImageTempPaths.Clear();
                 _undoTempPaths.Clear();
                 _tempPaths.Clear();
 
@@ -408,6 +405,7 @@ namespace DisertatieApp.ViewModels
             _currentFileIndex--;
             HandleCleanup();
 
+            _isNewImage = true;
             CurrentFilePath = Files.ElementAt(_currentFileIndex)?.FilePath;
             HandleEnableDisableButtons();
         }
@@ -417,6 +415,7 @@ namespace DisertatieApp.ViewModels
             _currentFileIndex++;
             HandleCleanup();
 
+            _isNewImage = true;
             CurrentFilePath = Files.ElementAt(_currentFileIndex)?.FilePath;
             HandleEnableDisableButtons();
         }
@@ -470,9 +469,14 @@ namespace DisertatieApp.ViewModels
 
         private void Undo(object obj)
         {
-            CurrentFilePath = _undoTempPaths.ElementAt(_undoTempPaths.Count - 1);
-            _undoTempPaths.RemoveAt(_undoTempPaths.Count - 1);
+            string lastImagePath = _undoTempPaths.ElementAt(_undoTempPaths.Count - 1);
+            CurrentFilePath = lastImagePath;
+
+            _tempPaths.Add(lastImagePath);
+            _undoTempPaths.Remove(lastImagePath);
+
             IsUndoEnabled = _undoTempPaths.Count > 0;
+            IsSaveEnabled = IsUndoEnabled;
         }
 
         #endregion
@@ -504,23 +508,21 @@ namespace DisertatieApp.ViewModels
         {
             string tempFilePath = Path.GetTempFileName();
 
-            Image image = !_lastTempFilePath.IsNullOrEmpty() ? Image.FromFile(_lastTempFilePath)
-                                                             : Image.FromFile(CurrentFilePath);
+            Image image = Image.FromFile(CurrentFilePath);
             image.RotateImage(positiveRotation ? 90 : -90, tempFilePath);
             _undoTempPaths.Add(CurrentFilePath);
 
-            CurrentFilePath = tempFilePath;
-            _currentImageTempPaths.Add(tempFilePath);
-            
+            CurrentFilePath = tempFilePath;            
             IsSaveEnabled = true;
         }
 
         private void HandleCleanup()
         {
-            _tempPaths.AddRange(_currentImageTempPaths);
-
-            _currentImageTempPaths.Clear();
-            _undoTempPaths.Clear();
+            if(_undoTempPaths.Count > 0)
+            { 
+                _tempPaths.AddRange(_undoTempPaths);
+                _undoTempPaths.Clear();
+            }
 
             IsSaveEnabled = IsUndoEnabled = false;
             ResetCrop();

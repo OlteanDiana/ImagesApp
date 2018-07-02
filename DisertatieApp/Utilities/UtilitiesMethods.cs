@@ -124,7 +124,7 @@ namespace DisertatieApp.Utilities
         {
             foreach (string file in filePaths)
             {
-                if (!File.Exists(file))
+                if (!File.Exists(file) || !Path.GetExtension(file).Equals(".tmp"))
                 {
                     continue;
                 }
