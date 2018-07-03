@@ -124,12 +124,19 @@ namespace DisertatieApp.Utilities
         {
             foreach (string file in filePaths)
             {
-                if (!File.Exists(file) || !Path.GetExtension(file).Equals(".tmp"))
+                try
+                {
+                    if (!File.Exists(file) || !Path.GetExtension(file).Equals(".tmp"))
+                    {
+                        continue;
+                    }
+
+                    File.Delete(file);
+                }
+                catch (Exception)
                 {
                     continue;
                 }
-
-                File.Delete(file);
             }
         }
 
@@ -213,5 +220,6 @@ namespace DisertatieApp.Utilities
                 yield return max;
             }
         }
+
     }
 }
